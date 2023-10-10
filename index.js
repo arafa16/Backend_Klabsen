@@ -6,6 +6,7 @@ import db from './config/Database.js';
 
 import UserRoute from './routes/UserRoute.js';
 import GanderRoute from './routes/GanderRoute.js';
+import PendidikanRoute from './routes/PendidikanRoute.js';
 
 const app = express();
 dotenv.config();
@@ -22,6 +23,7 @@ app.use(cors({
 app.use(express.json());
 app.use(UserRoute);
 app.use(GanderRoute);
+app.use(PendidikanRoute);
 
 app.listen(process.env.PORT,()=>{
     console.log('server running at port 5000')
