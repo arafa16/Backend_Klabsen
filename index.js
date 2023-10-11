@@ -11,6 +11,7 @@ import PenempatanRoute from './routes/PenempatanRoute.js';
 import JabatanRoute from './routes/JabatanRoute.js';
 import StatusPerkawinanRoute from './routes/StatusPerkawinanRoute.js';
 import KontakEmergancyRoute from './routes/KontakEmergancyRoute.js';
+import BankRoute from './routes/BankRoute.js';
 
 const app = express();
 dotenv.config();
@@ -32,6 +33,7 @@ app.use(PenempatanRoute);
 app.use(JabatanRoute);
 app.use(StatusPerkawinanRoute);
 app.use(KontakEmergancyRoute);
+app.use(BankRoute);
 
 app.listen(process.env.PORT,()=>{
     console.log('server running at port 5000')
