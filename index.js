@@ -16,6 +16,7 @@ import GolonganDarahRoute from './routes/GolonganDarahRoute.js';
 import JamOperasionalRoute from './routes/JamOperasionalRoute.js';
 import StatusRoute from './routes/StatusRoute.js';
 import PelanggaranRoute from './routes/PelanggaranRoute.js';
+import StatusInoutRoute from './routes/StatusInoutRoute.js';
 
 
 const app = express();
@@ -43,6 +44,7 @@ app.use(GolonganDarahRoute);
 app.use(JamOperasionalRoute);
 app.use(StatusRoute);
 app.use(PelanggaranRoute);
+app.use(StatusInoutRoute);
 
 app.listen(process.env.PORT,()=>{
     console.log(`server running at port ${process.env.PORT}`)
