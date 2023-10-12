@@ -1,6 +1,6 @@
 import Koreksi from "../models/KoreksiModal.js";
 import HistoryKoreksi from "../models/HistoryKoreksiModal.js";
-import Users from "../models/UserModel.js";
+import Users from "../models/UsersModel.js";
 import StatusKoreksi from "../models/StatusKoreksiModal.js";
 import InOut from "../models/InOutModal.js";
 import TipeAbsen from "../models/TipeAbsenModal.js";

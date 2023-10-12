@@ -19,6 +19,8 @@ import PelanggaranRoute from './routes/PelanggaranRoute.js';
 import StatusInoutRoute from './routes/StatusInoutRoute.js';
 import TipeAbsenRoute from './routes/TipeAbsenRoute.js';
 import KoreksiRoute from './routes/KoreksiRoute.js';
+import NotificationRoute from './routes/NotificationRoute.js';
+import TipeNotificationRoute from './routes/TipeNotificationRoute.js';
 
 
 const app = express();
@@ -49,6 +51,8 @@ app.use(PelanggaranRoute);
 app.use(StatusInoutRoute);
 app.use(TipeAbsenRoute);
 app.use(KoreksiRoute);
+app.use(NotificationRoute);
+app.use(TipeNotificationRoute);
 
 app.listen(process.env.PORT,()=>{
     console.log(`server running at port ${process.env.PORT}`)
