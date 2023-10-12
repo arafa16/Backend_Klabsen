@@ -48,7 +48,4 @@ Notification.belongsTo(TipeNotification, {foreignKey: 'tipeNotificationId'});
 Users.hasMany(Notification);
 Notification.belongsTo(Users, {foreignKey: 'userId'});
 
-Status.hasMany(Notification);
-Notification.belongsTo(Status, {foreignKey: 'statusId'});
-
 export default Notification;

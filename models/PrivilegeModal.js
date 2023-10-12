@@ -1,5 +1,6 @@
 import {Sequelize} from 'sequelize';
 import db from '../config/Database.js';
+import Users from './UsersModel.js';
 
 const {DataTypes} = Sequelize;
 
@@ -7,6 +8,13 @@ const Privilege = db.define('privilege', {
     uuid:{
         type: DataTypes.STRING,
         defaultValue: DataTypes.UUIDV4,
+        allowNull:false,
+        validate:{
+            notEmpty: true
+        }
+    },
+    userId:{
+        type: DataTypes.INTEGER,
         allowNull:false,
         validate:{
             notEmpty: true
@@ -104,6 +112,10 @@ const Privilege = db.define('privilege', {
         type: DataTypes.BOOLEAN,
         defaultValue:true
     }
-});
+})
 
-export default Privilege
+Privilege.hasMany(Users);
+Users.belongsTo(Privilege, {foreignKey : 'userId'});
+
+
+export default Privilege;

@@ -4,7 +4,7 @@ import path from 'path';
 import fs from 'fs';
 import moment from 'moment';
 import excelJs from 'exceljs';
-import Users from "../models/UserModel.js";
+import Users from "../models/UsersModel.js";
 import TipePendapatan from "../models/TipePendapatan.js";
 
 

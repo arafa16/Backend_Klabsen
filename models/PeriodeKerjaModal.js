@@ -51,7 +51,4 @@ const PeriodeKerja = db.define('periode_kerja', {
     }
 });
 
-Status.hasMany(PeriodeKerja);
-PeriodeKerja.belongsTo(Status, {foreignKey: 'statusId'});
-
 export default PeriodeKerja;
