@@ -17,6 +17,8 @@ import JamOperasionalRoute from './routes/JamOperasionalRoute.js';
 import StatusRoute from './routes/StatusRoute.js';
 import PelanggaranRoute from './routes/PelanggaranRoute.js';
 import StatusInoutRoute from './routes/StatusInoutRoute.js';
+import TipeAbsenRoute from './routes/TipeAbsenRoute.js';
+import KoreksiRoute from './routes/KoreksiRoute.js';
 
 
 const app = express();
@@ -45,6 +47,8 @@ app.use(JamOperasionalRoute);
 app.use(StatusRoute);
 app.use(PelanggaranRoute);
 app.use(StatusInoutRoute);
+app.use(TipeAbsenRoute);
+app.use(KoreksiRoute);
 
 app.listen(process.env.PORT,()=>{
     console.log(`server running at port ${process.env.PORT}`)
