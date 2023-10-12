@@ -23,6 +23,7 @@ import NotificationRoute from './routes/NotificationRoute.js';
 import TipeNotificationRoute from './routes/TipeNotificationRoute.js';
 import HistoryKoreksiRoute from './routes/HistoryKoreksiRoute.js';
 import PeriodeRoute from './routes/PeriodeRoute.js';
+import TipePendapatanRoute from './routes/TipePendapatanRoute.js';
 
 
 const app = express();
@@ -57,6 +58,7 @@ app.use(NotificationRoute);
 app.use(TipeNotificationRoute);
 app.use(HistoryKoreksiRoute);
 app.use(PeriodeRoute);
+app.use(TipePendapatanRoute);
 
 app.listen(process.env.PORT,()=>{
     console.log(`server running at port ${process.env.PORT}`)
