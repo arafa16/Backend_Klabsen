@@ -1,6 +1,6 @@
 module.exports = {
 	apps : [{
-		name	: "index",
+		name	: "klabsen",
 		script	: "nodemon index"
 	}]
 }
