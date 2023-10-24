@@ -1,8 +1,8 @@
-import KontakEmergency from "../models/KontakEmergencyModal.js";
+import ContactEmergency from "../models/ContactEmergencyModal.js";
 
 export const getKontaks = async(req, res) => {
     try {
-        const response = await KontakEmergency.findAll();
+        const response = await ContactEmergency.findAll();
 
         res.status(200).json(response);
     } catch (error) {
@@ -17,7 +17,7 @@ export const getKontaksTable = async(req, res) => {
     const offset = (page - 1) * limit;
 
     try {
-        const response = await KontakEmergency.findAndCountAll({
+        const response = await ContactEmergency.findAndCountAll({
             limit:limit,
             offset:offset,
         });
@@ -30,7 +30,7 @@ export const getKontaksTable = async(req, res) => {
 
 export const getKontakById = async(req, res) => {
     try {
-        const response = await KontakEmergency.findOne({
+        const response = await ContactEmergency.findOne({
             where:{
                 uuid:req.params.id
             }
@@ -46,7 +46,7 @@ export const createKontak = async(req, res) => {
     const {name, code, isActive} = req.body;
 
     try {
-        await KontakEmergency.create({
+        await ContactEmergency.create({
             name:name,
             code:code,
             isActive:isActive
@@ -61,7 +61,7 @@ export const createKontak = async(req, res) => {
 export const updateKontak = async(req, res) => {
     const {name, code, isActive} = req.body;
 
-    const response = await KontakEmergency.findOne({
+    const response = await ContactEmergency.findOne({
         where:{
             uuid:req.params.id
         }
@@ -83,7 +83,7 @@ export const updateKontak = async(req, res) => {
 }
 
 export const deleteKontak = async(req, res) => {
-    const response = await KontakEmergency.findOne({
+    const response = await ContactEmergency.findOne({
         where:{
             uuid:req.params.id
         }

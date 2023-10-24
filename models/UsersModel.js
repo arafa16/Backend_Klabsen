@@ -7,7 +7,7 @@ import Bank from './BankModal.js';
 import JamOperasional from './JamOperasionalModal.js';
 import StatusPerkawinan from './StatusPerkawinanModal.js';
 import Pendidikan from './PendidikanModal.js';
-import KontakEmergency from './KontakEmergencyModal.js';
+import ContactEmergency from './ContactEmergencyModal.js';
 import GolonganDarah from './GolonganDarahModel.js';
 import Group from './GroupModal.js';
 import Gander from './GanderModal.js';
@@ -152,19 +152,19 @@ const Users = db.define('users',{
         type: DataTypes.STRING,
         allowNull:true
     },
-    nomorBpjsKetenagaKerja:{
+    nomorBpjsKetenagakerjaan:{
         type: DataTypes.STRING,
         allowNull:true
     },
-    kontakEmergencyId:{
+    contactEmergencyId:{
         type: DataTypes.INTEGER,
         allowNull:true
     },
-    nomorEmergency:{
+    emergencyNumber:{
         type: DataTypes.STRING,
         allowNull:true
     },
-    alamatEmergency:{
+    emergencyAddress:{
         type: DataTypes.STRING,
         allowNull:true
     },
@@ -225,7 +225,7 @@ Pendidikan.hasMany(Users);
 Users.belongsTo(Pendidikan, {foreignKey: 'pendidikanId'});
 
 Status.hasMany(Users);
-Users.belongsTo(KontakEmergency, {foreignKey: 'kontakEmergencyId'});
+Users.belongsTo(ContactEmergency, {foreignKey: 'contactEmergencyId'});
 
 GolonganDarah.hasMany(Users);
 Users.belongsTo(GolonganDarah, {foreignKey: 'golonganDarahId'});

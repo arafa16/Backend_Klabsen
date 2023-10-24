@@ -10,11 +10,11 @@ import {
 
 const router = express.Router();
 
-router.get('/golonganDarah/:limit&:page', getGolonganDarahsTable);
-router.get('/golonganDarah/:id', getGolonganDarahById);
-router.get('/golonganDarah', getGolonganDarahs);
-router.post('/golonganDarah', createGolonganDarah);
-router.patch('/golonganDarah/:id', updateGolonganDarah);
-router.delete('/golonganDarah/:id', deleteGolonganDarah);
+router.get('/golonganDarahs/:limit&:page', getGolonganDarahsTable);
+router.get('/golonganDarahs/:id', getGolonganDarahById);
+router.get('/golonganDarahs', getGolonganDarahs);
+router.post('/golonganDarahs', createGolonganDarah);
+router.patch('/golonganDarahs/:id', updateGolonganDarah);
+router.delete('/golonganDarahs/:id', deleteGolonganDarah);
 
 export default router;

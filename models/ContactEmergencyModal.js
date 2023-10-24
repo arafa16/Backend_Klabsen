@@ -3,7 +3,7 @@ import db from '../config/Database.js';
 
 const {DataTypes} = Sequelize;
 
-const KontakEmergency = db.define('kontak_emergency', {
+const ContactEmergency = db.define('contact_emergency', {
     uuid:{
         type: DataTypes.STRING,
         defaultValue: DataTypes.UUIDV4,
@@ -29,4 +29,4 @@ const KontakEmergency = db.define('kontak_emergency', {
     }
 });
 
-export default KontakEmergency;
+export default ContactEmergency;

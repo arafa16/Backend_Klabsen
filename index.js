@@ -11,7 +11,7 @@ import PendidikanRoute from './routes/PendidikanRoute.js';
 import PenempatanRoute from './routes/PenempatanRoute.js';
 import JabatanRoute from './routes/JabatanRoute.js';
 import StatusPerkawinanRoute from './routes/StatusPerkawinanRoute.js';
-import KontakEmergancyRoute from './routes/KontakEmergancyRoute.js';
+import ContactEmergencyRoute from './routes/ContactEmergencyRoute.js';
 import BankRoute from './routes/BankRoute.js';
 import GolonganDarahRoute from './routes/GolonganDarahRoute.js';
 import JamOperasionalRoute from './routes/JamOperasionalRoute.js';
@@ -27,6 +27,7 @@ import PeriodeRoute from './routes/PeriodeRoute.js';
 import TipePendapatanRoute from './routes/TipePendapatanRoute.js';
 import PendapatanRoute from './routes/PendapatanRoute.js';
 import AuthRoute from './routes/AuthRoute.js';
+import GroupRoute from './routes/GroupRoute.js';
 
 
 const app = express();
@@ -67,7 +68,7 @@ app.use(PendidikanRoute);
 app.use(PenempatanRoute);
 app.use(JabatanRoute);
 app.use(StatusPerkawinanRoute);
-app.use(KontakEmergancyRoute);
+app.use(ContactEmergencyRoute);
 app.use(BankRoute);
 app.use(GolonganDarahRoute);
 app.use(JamOperasionalRoute);
@@ -83,6 +84,7 @@ app.use(PeriodeRoute);
 app.use(TipePendapatanRoute);
 app.use(PendapatanRoute);
 app.use(AuthRoute);
+app.use(GroupRoute);
 
 // store.sync();
 

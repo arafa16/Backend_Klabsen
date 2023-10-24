@@ -5,7 +5,7 @@ import GolonganDarah from "../models/GolonganDarahModel.js";
 import Group from "../models/GroupModal.js";
 import Jabatan from "../models/JabatanModal.js";
 import JamOperasional from "../models/JamOperasionalModal.js";
-import KontakEmergency from "../models/KontakEmergencyModal.js";
+import ContactEmergency from "../models/ContactEmergencyModal.js";
 import Pendidikan from "../models/PendidikanModal.js";
 import Penempatan from "../models/PenempatanModel.js";
 import Status from "../models/StatusModel.js";
@@ -44,7 +44,7 @@ export const getUsers = async(req, res) => {
                     attributes:['uuid','name']
                 },
                 {
-                    model:KontakEmergency,
+                    model:ContactEmergency,
                     attributes:['uuid','name']
                 },
                 {
@@ -108,7 +108,7 @@ export const getUsersTable = async(req, res) => {
                     attributes:['uuid','name']
                 },
                 {
-                    model:KontakEmergency,
+                    model:ContactEmergency,
                     attributes:['uuid','name']
                 },
                 {
@@ -168,7 +168,7 @@ export const getUserById = async(req, res) => {
                     attributes:['uuid','name']
                 },
                 {
-                    model:KontakEmergency,
+                    model:ContactEmergency,
                     attributes:['uuid','name']
                 },
                 {
@@ -227,9 +227,9 @@ export const createUser = async(req, res) => {
             ipk,
             nomorBpjsKesehatan,
             nomorBpjsKetenagaKerja,
-            kontakEmergencyId,
-            nomorEmergency,
-            alamatEmergency,
+            contactEmergencyId,
+            emergencyNumber,
+            emergencyAddress,
             nomorSim,
             golonganDarahId,
             bankId,
@@ -272,9 +272,9 @@ export const createUser = async(req, res) => {
             ipk:ipk,
             nomorBpjsKesehatan:nomorBpjsKesehatan,
             nomorBpjsKetenagaKerja:nomorBpjsKetenagaKerja,
-            kontakEmergencyId:kontakEmergencyId,
-            nomorEmergency:nomorEmergency,
-            alamatEmergency:alamatEmergency,
+            contactEmergencyId:contactEmergencyId,
+            emergencyNumber:emergencyNumber,
+            emergencyAddress:emergencyAddress,
             nomorSim:nomorSim,
             golonganDarahId:golonganDarahId,
             bankId:bankId,

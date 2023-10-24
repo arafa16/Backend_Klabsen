@@ -3,11 +3,11 @@ import { createStatus, deleteStatus, getStatusById, getStatuses, getStatusesTabl
 
 const router = express.Router();
 
-router.get('/statusPerkawinan/:limit&:page', getStatusesTable);
-router.get('/statusPerkawinan/:id', getStatusById);
-router.get('/statusPerkawinan', getStatuses);
-router.post('/statusPerkawinan', createStatus);
-router.patch('/statusPerkawinan/:id', updateStatus);
-router.delete('/statusPerkawinan/:id', deleteStatus);
+router.get('/statusPerkawinans/:limit&:page', getStatusesTable);
+router.get('/statusPerkawinans/:id', getStatusById);
+router.get('/statusPerkawinans', getStatuses);
+router.post('/statusPerkawinans', createStatus);
+router.patch('/statusPerkawinans/:id', updateStatus);
+router.delete('/statusPerkawinans/:id', deleteStatus);
 
 export default router;
