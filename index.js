@@ -28,6 +28,7 @@ import TipePendapatanRoute from './routes/TipePendapatanRoute.js';
 import PendapatanRoute from './routes/PendapatanRoute.js';
 import AuthRoute from './routes/AuthRoute.js';
 import GroupRoute from './routes/GroupRoute.js';
+import AtasanRoute from './routes/AtasanRoute.js';
 
 
 const app = express();
@@ -85,6 +86,7 @@ app.use(TipePendapatanRoute);
 app.use(PendapatanRoute);
 app.use(AuthRoute);
 app.use(GroupRoute);
+app.use(AtasanRoute);
 
 // store.sync();
 

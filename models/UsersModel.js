@@ -11,9 +11,9 @@ import ContactEmergency from './ContactEmergencyModal.js';
 import GolonganDarah from './GolonganDarahModel.js';
 import Group from './GroupModal.js';
 import Gander from './GanderModal.js';
-
+ 
 const {DataTypes} = Sequelize;
-
+ 
 const Users = db.define('users',{
     uuid:{
         type: DataTypes.STRING,
