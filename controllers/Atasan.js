@@ -4,7 +4,7 @@ export const getAtasans = async(req, res) => {
     try {
         const response = await Users.findAll({
             where:{
-                atasanId:1
+                isAtasan:true
             }
         });
 

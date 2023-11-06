@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import session from 'express-session';
 import SequelizeStore from 'connect-session-sequelize';
 import db from './config/Database.js';
+import fileUpload from 'express-fileupload';
 
 import UserRoute from './routes/UserRoute.js';
 import GanderRoute from './routes/GanderRoute.js';
@@ -63,6 +64,7 @@ app.use(cors({
 }));
 
 app.use(express.json());
+app.use(fileUpload());
 app.use(UserRoute);
 app.use(GanderRoute);
 app.use(PendidikanRoute);
@@ -87,6 +89,9 @@ app.use(PendapatanRoute);
 app.use(AuthRoute);
 app.use(GroupRoute);
 app.use(AtasanRoute);
+
+//setup public folder
+app.use(express.static("public"));
 
 // store.sync();
 

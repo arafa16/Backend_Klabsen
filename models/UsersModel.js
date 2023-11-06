@@ -36,11 +36,7 @@ const Users = db.define('users',{
     },
     name:{
         type: DataTypes.STRING,
-        allowNull:false,
-        validate:{
-            notEmpty: true,
-            len: [3, 255]
-        }
+        allowNull:false
     },
     email:{
         type: DataTypes.STRING,
@@ -200,14 +196,18 @@ const Users = db.define('users',{
         type: DataTypes.INTEGER,
         allowNull:true
     },
+    isAtasan:{
+        type: DataTypes.BOOLEAN,
+        defaultValue:false
+    },
     isActive:{
         type: DataTypes.BOOLEAN,
         defaultValue:true
     }
 })
 
-Users.hasMany(Users);
-Users.belongsTo(Users, {foreignKey: 'atasanId'});
+Users.hasMany(Users, {as: 'atasan',foreignKey: 'atasanId'});
+Users.belongsTo(Users, {as: 'parent',foreignKey: 'atasanId'});
 
 Gander.hasMany(Users);
 Users.belongsTo(Gander, {foreignKey: 'ganderId'});

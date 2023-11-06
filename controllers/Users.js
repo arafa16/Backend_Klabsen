@@ -36,10 +36,6 @@ export const getUsers = async(req, res) => {
                     attributes:['uuid','name']
                 },
                 {
-                    model:Atasan,
-                    attributes:['uuid','userId']
-                },
-                {
                     model:StatusPerkawinan,
                     attributes:['uuid','name']
                 },
@@ -64,7 +60,8 @@ export const getUsers = async(req, res) => {
                     attributes:['uuid','name']
                 },
                 {
-                    model:Status,
+                    model:Users,
+                    as: 'atasan',
                     attributes:['uuid','name']
                 }
             ]
@@ -190,6 +187,11 @@ export const getUserById = async(req, res) => {
                 {
                     model:Status,
                     attributes:['uuid','name']
+                },
+                {
+                    model:Users,
+                    as: 'atasan',
+                    attributes:['uuid','name']
                 }
             ]
         });
@@ -226,7 +228,7 @@ export const createUser = async(req, res) => {
             tahunLulus,
             ipk,
             nomorBpjsKesehatan,
-            nomorBpjsKetenagaKerja,
+            nomorBpjsKetenagakerjaan,
             contactEmergencyId,
             emergencyNumber,
             emergencyAddress,
@@ -271,7 +273,7 @@ export const createUser = async(req, res) => {
             tahunLulus:tahunLulus,
             ipk:ipk,
             nomorBpjsKesehatan:nomorBpjsKesehatan,
-            nomorBpjsKetenagaKerja:nomorBpjsKetenagaKerja,
+            nomorBpjsKetenagakerjaan:nomorBpjsKetenagakerjaan,
             contactEmergencyId:contactEmergencyId,
             emergencyNumber:emergencyNumber,
             emergencyAddress:emergencyAddress,
@@ -390,6 +392,31 @@ export const updateUser = async(req, res) => {
         return res.status(500).json({msg: error.message});
     }
 }
+
+export const changePassword = async(req, res) => {
+    const findUser = await Users.findOne({
+        where:{
+            uuid:req.params.id
+        }
+    });
+
+    if(!findUser) return res.status(404).json({msg: "not found"});
+
+    const { password } = req.body;
+
+    const hasPassword = await argon.hash(password);
+
+    try {
+        findUser.update({
+            password:hasPassword
+        });
+
+        return res.status(201).json({msg: "success"});
+    } catch (error) {
+        return res.status(500).json({msg: error.message});
+    }
+}
+
 
 export const deleteUser = async(req, res) => {
     const response = await Users.findOne({

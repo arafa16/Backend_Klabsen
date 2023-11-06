@@ -1,6 +1,6 @@
 import Status from "../models/StatusModel.js";
 import Users from "../models/UsersModel.js";
-import argon2 from 'argon2';
+import argon from 'argon2';
 
 export const Login = async(req, res) =>{
     const user = await Users.findOne({
@@ -10,7 +10,7 @@ export const Login = async(req, res) =>{
     });
     if(!user) return res.status(404).json({msg: "user not found"});
 
-    const match = await argon2.verify(user.password, req.body.password);
+    const match = await argon.verify(user.password, req.body.password);
     if(!match) return res.status(401).json({msg: "password salah"});
 
     req.session.userId = user.uuid;
@@ -20,6 +20,96 @@ export const Login = async(req, res) =>{
     const email = user.email;
     
     res.status(200).json({uuid, name, email});
+}
+
+export const register = async(req, res) => {
+    const { nik,
+            absenId, 
+            name, 
+            ganderId, 
+            email,
+            extention,
+            nomorHp,
+            penempatanId,
+            jabatanId,
+            atasanId,
+            nomorKtp,
+            alamatKtp,
+            alamatDomisili,
+            tempatLahir,
+            tanggalLahir,
+            nomorNpwp,
+            statusPerkawinanId,
+            jumlahAnak,
+            namaIbu,
+            pendidikanId,
+            namaSekolah,
+            jurusanSekolah,
+            tahunLulus,
+            ipk,
+            nomorBpjsKesehatan,
+            nomorBpjsKetenagakerjaan,
+            contactEmergencyId,
+            emergencyNumber,
+            emergencyAddress,
+            nomorSim,
+            golonganDarahId,
+            bankId,
+            nomorRekening,
+            jamOperasionalId,
+            groupId,
+            password,
+            quote
+        } = req.body;
+    
+    const hasPassword = await argon.hash(password);
+
+    try {
+        await Users.create({
+            nik:nik,
+            absenId:absenId,
+            name:name, 
+            ganderId:ganderId, 
+            email:email,
+            password:hasPassword,
+            extention:extention,
+            nomorHp:nomorHp,
+            penempatanId:penempatanId,
+            jabatanId:jabatanId,
+            atasanId:atasanId,
+            nomorKtp:nomorKtp,
+            alamatKtp:alamatKtp,
+            alamatDomisili:alamatDomisili,
+            tempatLahir:tempatLahir,
+            tanggalLahir:tanggalLahir,
+            nomorNpwp:nomorNpwp,
+            statusPerkawinanId:statusPerkawinanId,
+            jumlahAnak:jumlahAnak,
+            namaIbu:namaIbu,
+            pendidikanId:pendidikanId,
+            namaSekolah:namaSekolah,
+            jurusanSekolah:jurusanSekolah,
+            tahunLulus:tahunLulus,
+            ipk:ipk,
+            nomorBpjsKesehatan:nomorBpjsKesehatan,
+            nomorBpjsKetenagakerjaan:nomorBpjsKetenagakerjaan,
+            contactEmergencyId:contactEmergencyId,
+            emergencyNumber:emergencyNumber,
+            emergencyAddress:emergencyAddress,
+            nomorSim:nomorSim,
+            golonganDarahId:golonganDarahId,
+            bankId:bankId,
+            nomorRekening:nomorRekening,
+            jamOperasionalId:jamOperasionalId,
+            groupId:groupId,
+            quote:quote
+        });
+
+        return res.status(201).json({msg: "success"});
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({msg: error.message});
+    }
 }
 
 export const getMe = async(req, res) => {
@@ -38,7 +128,7 @@ export const getMe = async(req, res) => {
             'absenId',
             'name',
             'image',
-            'url',
+            'url_image',
             'email',
             'isActive'
         ],
@@ -46,9 +136,6 @@ export const getMe = async(req, res) => {
             {
                 model:Status,
                 attributes:['uuid','name','code']
-            },
-            {
-                model:Privilege
             }
         ]
 

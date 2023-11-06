@@ -57,6 +57,8 @@ export const createBank = async(req, res) => {
 } 
 
 export const updateBank = async(req, res) => {
+    const {name, code, isActive} = req.body;
+
     const response = await Bank.findOne({
         where:{
             uuid:req.params.id
@@ -67,7 +69,9 @@ export const updateBank = async(req, res) => {
 
     try {
         response.update({
-            name:req.body.name
+            name:name,
+            code:code,
+            isActive:isActive
         });
 
         return res.status(201).json({msg: "update bank success"});
