@@ -17,7 +17,7 @@ export const getGroupsTable = async(req, res) => {
     const offset = (page - 1) * limit;
 
     try {
-        const response = await Group.findandCountAll({
+        const response = await Group.findAndCountAll({
             limit:limit,
             offset:offset
         });

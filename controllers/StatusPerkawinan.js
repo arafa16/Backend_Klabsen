@@ -62,13 +62,15 @@ export const updateStatus = async(req, res) => {
     const {name, code, isActive} = req.body;
     
     const response = await StatusPerkawinan.findOne({
-        uuid:req.params.id
+        where:{
+            uuid:req.params.id
+        }
     });
 
     if(!response) return res.status(404).json({msg: "not found"});
 
     try {
-        response.update({
+        await response.update({
             name:name,
             code:code,
             isActive:isActive

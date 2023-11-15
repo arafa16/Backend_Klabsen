@@ -3,11 +3,11 @@ import { createPelanggaran, deletePelanggaran, getPelanggaran, getPelanggaranByI
 
 const router = express.Router();
 
-router.get('/pelanggaran/:limit&:page', getPelanggaranTable);
-router.get('/pelanggaran/:id', getPelanggaranById);
-router.get('/pelanggaran', getPelanggaran);
-router.post('/pelanggaran', createPelanggaran);
-router.patch('/pelanggaran/:id', updatePelanggaran);
-router.delete('/pelanggaran/:id', deletePelanggaran);
+router.get('/pelanggarans/:limit&:page', getPelanggaranTable);
+router.get('/pelanggarans/:id', getPelanggaranById);
+router.get('/pelanggarans', getPelanggaran);
+router.post('/pelanggarans', createPelanggaran);
+router.patch('/pelanggarans/:id', updatePelanggaran);
+router.delete('/pelanggarans/:id', deletePelanggaran);
 
 export default router;

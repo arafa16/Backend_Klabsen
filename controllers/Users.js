@@ -240,7 +240,8 @@ export const createUser = async(req, res) => {
             groupId,
             password,
             quote,
-            statusId
+            statusId,
+            isActive
         } = req.body;
     
     const hasPassword = await argon.hash(password);
@@ -284,7 +285,8 @@ export const createUser = async(req, res) => {
             jamOperasionalId:jamOperasionalId,
             groupId:groupId,
             quote:quote,
-            statusId:statusId
+            statusId:statusId,
+            isActive:isActive
         });
 
         return res.status(201).json({msg: "success"});

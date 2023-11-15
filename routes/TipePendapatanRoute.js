@@ -10,11 +10,11 @@ import {
 
 const router = express.Router();
 
-router.get('/tipePendapatan/:limit&:page', getTipePendapatanTable);
-router.get('/tipePendapatan/:id', getTipePendapatanById);
-router.get('/tipePendapatan', getTipePendapatan);
-router.post('/tipePendapatan', createTipePendapatan);
-router.patch('/tipePendapatan/:id', updateTipePendapatan);
-router.delete('/tipePendapatan/:id', deleteTipePendapatan);
+router.get('/tipePendapatans/:limit&:page', getTipePendapatanTable);
+router.get('/tipePendapatans/:id', getTipePendapatanById);
+router.get('/tipePendapatans', getTipePendapatan);
+router.post('/tipePendapatans', createTipePendapatan);
+router.patch('/tipePendapatans/:id', updateTipePendapatan);
+router.delete('/tipePendapatans/:id', deleteTipePendapatan);
 
 export default router;

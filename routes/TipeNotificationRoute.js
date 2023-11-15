@@ -10,11 +10,11 @@ import {
 
 const router = express.Router();
 
-router.get('/tipeNotification/:limit&:page', getTipeNotificationTable);
-router.get('/tipeNotification/:id', getTipeNotificationById);
-router.get('/tipeNotification', getTipeNotification);
-router.post('/tipeNotification', createTipeNotification);
-router.patch('/tipeNotification/:id', updateTipeNotification);
-router.delete('/tipeNotification/:id', deleteTipeNotification);
+router.get('/tipeNotifications/:limit&:page', getTipeNotificationTable);
+router.get('/tipeNotifications/:id', getTipeNotificationById);
+router.get('/tipeNotifications', getTipeNotification);
+router.post('/tipeNotifications', createTipeNotification);
+router.patch('/tipeNotifications/:id', updateTipeNotification);
+router.delete('/tipeNotifications/:id', deleteTipeNotification);
 
 export default router;

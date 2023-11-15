@@ -10,11 +10,11 @@ import {
 
 const router = express.Router();
 
-router.get('/tipeAbsen/:limit&:page', getTipeAbsenTable);
-router.get('/tipeAbsen/:id', getTipeAbsenById);
-router.get('/tipeAbsen', getTipeAbsen);
-router.post('/tipeAbsen', createTipeAbsen);
-router.patch('/tipeAbsen/:id', updateTipeAbsen);
-router.delete('/tipeAbsen/:id', deleteTipeAbsen);
+router.get('/tipeAbsens/:limit&:page', getTipeAbsenTable);
+router.get('/tipeAbsens/:id', getTipeAbsenById);
+router.get('/tipeAbsens', getTipeAbsen);
+router.post('/tipeAbsens', createTipeAbsen);
+router.patch('/tipeAbsens/:id', updateTipeAbsen);
+router.delete('/tipeAbsens/:id', deleteTipeAbsen);
 
 export default router;

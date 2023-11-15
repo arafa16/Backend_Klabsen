@@ -43,13 +43,14 @@ export const getJamOperasionalById = async(req, res) => {
 }
 
 export const createJamOperasional = async(req, res) => {
-    const {name, jamMasuk, jamPulang, keterangan, isActive} = req.body;
+    const {name, jamMasuk, jamPulang, code, keterangan, isActive} = req.body;
     try {
         await JamOperasional.create({
             name:name,
             jamMasuk:jamMasuk,
             jamPulang:jamPulang,
             keterangan:keterangan,
+            code:code,
             isActive:isActive
         });
 
@@ -60,7 +61,7 @@ export const createJamOperasional = async(req, res) => {
 }
 
 export const updateJamOperasional = async(req, res) => {
-    const {name, jamMasuk, jamPulang, keterangan, isActive} = req.body;
+    const {name, jamMasuk, jamPulang, code, keterangan, isActive} = req.body;
 
     const response = await JamOperasional.findOne({
         where:{
@@ -76,6 +77,7 @@ export const updateJamOperasional = async(req, res) => {
             jamMasuk:jamMasuk,
             jamPulang:jamPulang,
             keterangan:keterangan,
+            code:code,
             isActive:isActive
         });
 

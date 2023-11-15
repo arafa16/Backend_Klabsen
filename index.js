@@ -30,6 +30,7 @@ import PendapatanRoute from './routes/PendapatanRoute.js';
 import AuthRoute from './routes/AuthRoute.js';
 import GroupRoute from './routes/GroupRoute.js';
 import AtasanRoute from './routes/AtasanRoute.js';
+import StatusKoreksi from './routes/StatusKoreksiRoute.js'
 
 
 const app = express();
@@ -80,6 +81,7 @@ app.use(PelanggaranRoute);
 app.use(StatusInoutRoute);
 app.use(TipeAbsenRoute);
 app.use(KoreksiRoute);
+app.use(StatusKoreksi);
 app.use(NotificationRoute);
 app.use(TipeNotificationRoute);
 app.use(HistoryKoreksiRoute);

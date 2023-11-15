@@ -69,7 +69,7 @@ export const updateStatusKoreksi = async(req, res) => {
 
     if(!response) return res.status(404).json({msg: "not found"});
     try {
-        await StatusKoreksi.create({
+        await response.update({
             name:name,
             code:code,
             isActive:isActive
