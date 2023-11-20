@@ -340,12 +340,9 @@ export const updateUser = async(req, res) => {
         nomorRekening,
         jamOperasionalId,
         groupId,
-        password,
         quote,
         statusId
     } = req.body;
-
-    const hasPassword = await argon.hash(password);
 
     try {
         findUser.update({
@@ -384,7 +381,6 @@ export const updateUser = async(req, res) => {
             nomorRekening:nomorRekening,
             jamOperasionalId:jamOperasionalId,
             groupId:groupId,
-            password:hasPassword,
             quote:quote,
             statusId:statusId
         });
