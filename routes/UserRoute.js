@@ -12,7 +12,7 @@ import { uploadPhoto } from '../controllers/PhotoProfile.js';
 
 const router = express.Router();
 
-router.get('/users/:limit&:page', getUsersTable);
+router.get('/users/:limit&:page&:statusCode', getUsersTable);
 router.get('/users/:id', getUserById);
 router.get('/users', getUsers);
 router.post('/users', createUser);

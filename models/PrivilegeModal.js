@@ -13,13 +13,6 @@ const Privilege = db.define('privilege', {
             notEmpty: true
         }
     },
-    userId:{
-        type: DataTypes.INTEGER,
-        allowNull:false,
-        validate:{
-            notEmpty: true
-        }
-    },
     dashboard:{
         type: DataTypes.BOOLEAN,
         defaultValue:false
@@ -113,9 +106,5 @@ const Privilege = db.define('privilege', {
         defaultValue:true
     }
 })
-
-Privilege.hasMany(Users);
-Users.belongsTo(Privilege, {foreignKey : 'userId'});
-
 
 export default Privilege;

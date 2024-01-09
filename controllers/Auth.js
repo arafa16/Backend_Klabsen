@@ -1,6 +1,7 @@
 import Status from "../models/StatusModel.js";
 import Users from "../models/UsersModel.js";
 import argon from 'argon2';
+import Privilege from "../models/PrivilegeModal.js";
 
 export const Login = async(req, res) =>{
     const user = await Users.findOne({
@@ -136,6 +137,9 @@ export const getMe = async(req, res) => {
             {
                 model:Status,
                 attributes:['uuid','name','code']
+            },
+            {
+                model:Privilege
             }
         ]
 

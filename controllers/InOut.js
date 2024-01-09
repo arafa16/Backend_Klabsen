@@ -1,9 +1,12 @@
-import Atasan from "../models/AtasanModal.js";
 import InOut from "../models/InOutModal.js";
 import Pelanggaran from "../models/PelanggaranModal.js";
 import StatusInout from "../models/StatusInoutModal.js";
 import TipeAbsen from "../models/TipeAbsenModal.js";
-import Users from "../models/UserModel.js";
+import Users from "../models/UsersModel.js";
+import { FingerprintSolution } from "fingerprint-solution";
+import date from 'date-and-time';
+import Koreksi from "../models/KoreksiModal.js";
+import StatusKoreksi from "../models/StatusKoreksiModal.js";
 
 export const getInOut = async(req, res) => {
     try {
@@ -12,23 +15,23 @@ export const getInOut = async(req, res) => {
             include:[{
                 model:Users,
                 attributes:['uuid','name','absenId','isActive'],
-                include:{
-                    model:Atasan,
-                    attributes:['uuid'],
-                    include:{
-                        model:Users,
-                        attributes:['uuid','name']
-                    }
-                }
+                // include:{
+                //     model:Atasan,
+                //     attributes:['uuid'],
+                //     include:{
+                //         model:Users,
+                //         attributes:['uuid','name']
+                //     }
+                // }
             },{
                 model:TipeAbsen,
-                attributes:['uuid','name']
+                attributes:['uuid','name','code']
             },{
                 model:Pelanggaran,
-                attributes:['uuid','name']
+                attributes:['uuid','name','code']
             },{
                 model:StatusInout,
-                attributes:['uuid','name']
+                attributes:['uuid','name','code']
             }]
         });
         
@@ -48,14 +51,14 @@ export const getInOutById = async(req, res) => {
             include:[{
                 model:Users,
                 attributes:['uuid','name','absenId'],
-                include:{
-                    model:Atasan,
-                    attributes:['uuid'],
-                    include:{
-                        model:Users,
-                        attributes:['uuid','name']
-                    }
-                }
+                // include:{
+                //     model:Atasan,
+                //     attributes:['uuid'],
+                //     include:{
+                //         model:Users,
+                //         attributes:['uuid','name']
+                //     }
+                // }
             },{
                 model:TipeAbsen,
                 attributes:['uuid','name']
@@ -65,6 +68,9 @@ export const getInOutById = async(req, res) => {
             },{
                 model:StatusInout,
                 attributes:['uuid','name']
+            },{
+                model:Koreksi,
+                include:StatusKoreksi
             }]
         });
         
@@ -90,15 +96,15 @@ export const getInOutByUser = async(req, res) => {
             include:[
                 {
                     model:TipeAbsen,
-                    attributes:['uuid','name']
+                    attributes:['uuid','name','code']
                 },
                 {
                     model:Pelanggaran,
-                    attributes:['uuid','name']
+                    attributes:['uuid','name','code']
                 },
                 {
                     model:StatusInout,
-                    attributes:['uuid','name']
+                    attributes:['uuid','name','code']
                 }
             ]
         });
@@ -220,5 +226,43 @@ export const deleteInOut = async(req, res) => {
         return res.status(201).json({msg: "success"});
     } catch (error) {
         return res.status(500).json({msg: error.message});
+    }
+}
+
+// get data finger mesin
+
+export const getDataFinger = async(req, res) => {
+    try {
+        const datas = await FingerprintSolution.download('103.160.12.57:8070', []);
+        const dateNow = new Date();
+        dateNow.setDate(dateNow.getDate() - 30);
+        const min = date.format(dateNow, 'YYYY-MM-DD HH:mm:ss');
+        // const absen = datas.filter(data=>data.time > min);
+        const absen = datas.filter(
+            data=>data.pin==1107 
+            // && data.status == 1
+            );
+
+        absen.map(async (data)=>{
+
+            const status = await TipeAbsen.findOne({
+                where:{
+                    code:data.status
+                }
+            });
+
+            await InOut.create({
+                userId:1,
+                tanggalMulai:data.time,
+                tanggalSelesai:data.time,
+                tipeAbsenId:status.id,
+                pelanggaranId:1,
+                statusInoutId:1,
+            });
+        });
+        console.log(absen);
+        res.status(200).json(absen);
+    } catch (error) {
+        res.status(500).json({msg : error});
     }
 }

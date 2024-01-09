@@ -31,6 +31,7 @@ import AuthRoute from './routes/AuthRoute.js';
 import GroupRoute from './routes/GroupRoute.js';
 import AtasanRoute from './routes/AtasanRoute.js';
 import StatusKoreksi from './routes/StatusKoreksiRoute.js'
+import InOut from './routes/InOutRoute.js'
 
 
 const app = express();
@@ -91,6 +92,7 @@ app.use(PendapatanRoute);
 app.use(AuthRoute);
 app.use(GroupRoute);
 app.use(AtasanRoute);
+app.use(InOut);
 
 //setup public folder
 app.use(express.static("public"));

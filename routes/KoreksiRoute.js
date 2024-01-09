@@ -4,16 +4,26 @@ import {
     deleteKoreksi, 
     getKoreksi, 
     getKoreksiById, 
-    updateKoreksi 
+    updateKoreksi,
+    getKoreksiTableByUser,
+    getKoreksiTableByApprover, 
+    approveKoreksi,
+    getKoreksiByApprover,
+    getKoreksiByUser
 } from '../controllers/Koreksi.js';
 
 const route = express.Router();
 
-route.get('/koreksi/:limit&:page', getKoreksi);
-route.get('/koreksi/:id', getKoreksiById);
-route.get('/koreksi', getKoreksi);
-route.post('/koreksi', createKoreksi);
-route.patch('/koreksi/:id', updateKoreksi);
-route.delete('/koreksi/:id', deleteKoreksi);
+route.get('/koreksis/:limit&:page&:id&:statusCode/approver', getKoreksiTableByApprover);
+route.get('/koreksis/:limit&:page&:id&:statusCode', getKoreksiTableByUser);
+route.get('/koreksis/:limit&:page', getKoreksi);
+route.get('/koreksis/:id/approver', getKoreksiByApprover);
+route.get('/koreksis/:id/user', getKoreksiByUser);
+route.get('/koreksis/:id', getKoreksiById);
+route.get('/koreksis', getKoreksi);
+route.post('/koreksis', createKoreksi);
+route.patch('/koreksis/:id/approve', approveKoreksi);
+route.patch('/koreksis/:id', updateKoreksi);
+route.delete('/koreksis/:id', deleteKoreksi);
 
 export default route;

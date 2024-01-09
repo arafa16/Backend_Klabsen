@@ -17,7 +17,7 @@ import argon from 'argon2';
 
 export const getUsers = async(req, res) => {
     try {
-        const response = await Users.findAll({
+        const response = await Users.findAndCountAll({
             include:[
                 {
                     model:Gander,
@@ -63,6 +63,10 @@ export const getUsers = async(req, res) => {
                     model:Users,
                     as: 'atasan',
                     attributes:['uuid','name']
+                },
+                {
+                    model:Status,
+                    attributes:['uuid','name','code']
                 }
             ]
         });
@@ -76,62 +80,123 @@ export const getUsers = async(req, res) => {
 export const getUsersTable = async(req, res) => {
     const limit = parseInt(req.params.limit);
     const page = parseInt(req.params.page);
+    const statusCode = parseInt(req.params.statusCode);
 
     const offset = (page - 1) * limit;
 
     try {
-        const response = await Users.findAndCountAll({
-            limit:limit,
-            offset:offset,
-            include:[
-                {
-                    model:Gander,
-                    attributes:['uuid','name']
-                },
-                {
-                    model:Pendidikan,
-                    attributes:['uuid','name']
-                },
-                {
-                    model:Penempatan,
-                    attributes:['uuid','name']
-                },
-                {
-                    model:Jabatan,
-                    attributes:['uuid','name']
-                },
-                {
-                    model:StatusPerkawinan,
-                    attributes:['uuid','name']
-                },
-                {
-                    model:ContactEmergency,
-                    attributes:['uuid','name']
-                },
-                {
-                    model:Bank,
-                    attributes:['uuid','name']
-                },
-                {
-                    model:GolonganDarah,
-                    attributes:['uuid','name']
-                },
-                {
-                    model:JamOperasional,
-                    attributes:['uuid','name','jamMasuk','jamPulang','keterangan']
-                },
-                {
-                    model:Group,
-                    attributes:['uuid','name']
-                },
-                {
-                    model:Status,
-                    attributes:['uuid','name']
-                }
-            ]
-        });
+        if(statusCode !== 0){
+            const response = await Users.findAndCountAll({
+                limit:limit,
+                offset:offset,
+                include:[
+                    {
+                        model:Gander,
+                        attributes:['uuid','name']
+                    },
+                    {
+                        model:Pendidikan,
+                        attributes:['uuid','name']
+                    },
+                    {
+                        model:Penempatan,
+                        attributes:['uuid','name']
+                    },
+                    {
+                        model:Jabatan,
+                        attributes:['uuid','name']
+                    },
+                    {
+                        model:StatusPerkawinan,
+                        attributes:['uuid','name']
+                    },
+                    {
+                        model:ContactEmergency,
+                        attributes:['uuid','name']
+                    },
+                    {
+                        model:Bank,
+                        attributes:['uuid','name']
+                    },
+                    {
+                        model:GolonganDarah,
+                        attributes:['uuid','name']
+                    },
+                    {
+                        model:JamOperasional,
+                        attributes:['uuid','name','jamMasuk','jamPulang','keterangan']
+                    },
+                    {
+                        model:Group,
+                        attributes:['uuid','name']
+                    },
+                    {
+                        model:Status,
+                        where:{
+                            code:statusCode
+                        },
+                        attributes:['uuid','name','code']
+                    }
+                ]
+            });
 
-        res.status(200).json(response);
+            res.status(200).json(response);
+        }
+        else{
+            const response = await Users.findAndCountAll({
+                limit:limit,
+                offset:offset,
+                include:[
+                    {
+                        model:Gander,
+                        attributes:['uuid','name']
+                    },
+                    {
+                        model:Pendidikan,
+                        attributes:['uuid','name']
+                    },
+                    {
+                        model:Penempatan,
+                        attributes:['uuid','name']
+                    },
+                    {
+                        model:Jabatan,
+                        attributes:['uuid','name']
+                    },
+                    {
+                        model:StatusPerkawinan,
+                        attributes:['uuid','name']
+                    },
+                    {
+                        model:ContactEmergency,
+                        attributes:['uuid','name']
+                    },
+                    {
+                        model:Bank,
+                        attributes:['uuid','name']
+                    },
+                    {
+                        model:GolonganDarah,
+                        attributes:['uuid','name']
+                    },
+                    {
+                        model:JamOperasional,
+                        attributes:['uuid','name','jamMasuk','jamPulang','keterangan']
+                    },
+                    {
+                        model:Group,
+                        attributes:['uuid','name']
+                    },
+                    {
+                        model:Status,
+                        attributes:['uuid','name']
+                    }
+                ]
+            });
+    
+            res.status(200).json(response);
+        }
+        
     } catch (error) {
         res.status(500).json({msg: error});
     }
@@ -186,7 +251,7 @@ export const getUserById = async(req, res) => {
                 },
                 {
                     model:Status,
-                    attributes:['uuid','name']
+                    attributes:['id','uuid','name']
                 },
                 {
                     model:Users,
@@ -341,7 +406,8 @@ export const updateUser = async(req, res) => {
         jamOperasionalId,
         groupId,
         quote,
-        statusId
+        statusId,
+        isActive,
     } = req.body;
 
     try {
@@ -382,7 +448,8 @@ export const updateUser = async(req, res) => {
             jamOperasionalId:jamOperasionalId,
             groupId:groupId,
             quote:quote,
-            statusId:statusId
+            statusId:statusId,
+            isActive:isActive
         });
 
         return res.status(201).json({msg: "success"});

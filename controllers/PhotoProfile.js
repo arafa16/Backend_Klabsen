@@ -28,7 +28,14 @@ export const uploadPhoto = async(req, res) => {
     //delete foto
     if(findUser.image !== null){
         const filePath = `./public/photos/${findUser.image}`;
-        fs.unlinkSync(filePath);
+        if(!fs.existsSync(filePath)){
+            console.log('file tidak di temukan');
+        }
+        else{
+            fs.unlinkSync(filePath);
+            console.log('file deleted');
+        }
+        
     }
 
     file.mv(`./public/photos/${fileName}`, async(err)=>{
