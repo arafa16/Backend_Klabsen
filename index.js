@@ -32,6 +32,7 @@ import GroupRoute from './routes/GroupRoute.js';
 import AtasanRoute from './routes/AtasanRoute.js';
 import StatusKoreksi from './routes/StatusKoreksiRoute.js'
 import InOut from './routes/InOutRoute.js'
+import Privilege from './routes/PrivilegeRoute.js';
 
 
 const app = express();
@@ -93,6 +94,7 @@ app.use(AuthRoute);
 app.use(GroupRoute);
 app.use(AtasanRoute);
 app.use(InOut);
+app.use(Privilege);
 
 //setup public folder
 app.use(express.static("public"));

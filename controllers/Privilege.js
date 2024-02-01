@@ -1,4 +1,5 @@
 import Privilege from "../models/PrivilegeModal.js";
+import Users from "../models/UsersModel.js";
 
 export const getPrivileges = async(req, res) => {
     try {
@@ -72,30 +73,38 @@ export const createPrivilege = async(req, res) => {
     } = req.body;
 
     try {
-        await Privilege.create({
-            userId:userId, 
-            dashboard:dashboard, 
-            editUserSub:editUserSub, 
-            absen:absen, 
-            kalendarSub:kalendarSub, 
-            pengajuanKoreksiSub:pengajuanKoreksiSub, 
-            approvalKoreksiSub:approvalKoreksiSub,
-            absenModal:absenModal,
-            wfhModal:wfhModal,
-            shiftModal:shiftModal,
-            slipGaji:slipGaji,
-            pendapatanSub:pendapatanSub,
-            pendapatanLainSub:pendapatanLainSub,
-            pendapatanAdminSub:pendapatanAdminSub,
-            admin:admin,
-            userSub:userSub,
-            eventSub:eventSub,
-            koreksiAdminSub:koreksiAdminSub,
-            perhitunganNilaiSub:perhitunganNilaiSub,
-            etiket:etiket,
-            pengajuanKendalaSub:pengajuanKendalaSub,
-            setting:setting
-        });
+        const privilege = await Privilege.create({
+                            userId:userId, 
+                            dashboard:dashboard, 
+                            editUserSub:editUserSub, 
+                            absen:absen, 
+                            kalendarSub:kalendarSub, 
+                            pengajuanKoreksiSub:pengajuanKoreksiSub, 
+                            approvalKoreksiSub:approvalKoreksiSub,
+                            absenModal:absenModal,
+                            wfhModal:wfhModal,
+                            shiftModal:shiftModal,
+                            slipGaji:slipGaji,
+                            pendapatanSub:pendapatanSub,
+                            pendapatanLainSub:pendapatanLainSub,
+                            pendapatanAdminSub:pendapatanAdminSub,
+                            admin:admin,
+                            userSub:userSub,
+                            eventSub:eventSub,
+                            koreksiAdminSub:koreksiAdminSub,
+                            perhitunganNilaiSub:perhitunganNilaiSub,
+                            etiket:etiket,
+                            pengajuanKendalaSub:pengajuanKendalaSub,
+                            setting:setting
+                        });
+        
+        const user = await Users.update({
+            privilegeId:privilege.id
+        },{
+            where:{
+                uuid:userId
+            }
+        })
 
         return res.status(201).json({msg: "success"});
     } catch (error) {

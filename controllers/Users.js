@@ -12,6 +12,7 @@ import Status from "../models/StatusModel.js";
 import StatusPerkawinan from "../models/StatusPerkawinanModal.js";
 
 import argon from 'argon2';
+import Privilege from "../models/PrivilegeModal.js";
 // import path from 'path';
 // import fs from 'fs';
 
@@ -257,6 +258,9 @@ export const getUserById = async(req, res) => {
                     model:Users,
                     as: 'atasan',
                     attributes:['uuid','name']
+                },
+                {
+                    model:Privilege
                 }
             ]
         });
