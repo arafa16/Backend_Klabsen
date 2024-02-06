@@ -35,6 +35,11 @@ const Pendapatan = db.define('pendapatan', {
     periode:{
         type: DataTypes.DATE,
         allowNull:true
+    }
+    ,
+    initialPeriode:{
+        type: DataTypes.STRING,
+        allowNull:true
     },
     basicSalary:{
         type: DataTypes.DECIMAL,

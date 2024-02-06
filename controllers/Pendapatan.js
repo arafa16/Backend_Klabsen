@@ -6,7 +6,9 @@ import moment from 'moment';
 import excelJs from 'exceljs';
 import Users from "../models/UsersModel.js";
 import TipePendapatan from "../models/TipePendapatan.js";
-
+import Group from "../models/GroupModal.js";
+import { Op } from "sequelize";
+import date from 'date-and-time';
 
 export const getPendapatan = async(req, res) => {
     try {
@@ -21,6 +23,7 @@ export const getPendapatan = async(req, res) => {
 export const getPendapatanTable = async(req, res) => {
     const limit = parseInt(req.params.limit);
     const page = parseInt(req.params.page);
+    const search = req.params.search;
 
     const offset = (page - 1) * limit;
     
@@ -31,7 +34,7 @@ export const getPendapatanTable = async(req, res) => {
             include:[
                 {
                     model:Users,
-                    attributes:['uuid','name']
+                    attributes:['uuid','name','nik']
                 }
             ]
         });
@@ -39,6 +42,149 @@ export const getPendapatanTable = async(req, res) => {
         return res.status(200).json(response);
     } catch (error) {
         return req.status(500).json({msg: error.message})
+    }
+}
+
+export const getPendapatanTableSearch = async(req, res) => {
+    const limit = parseInt(req.params.limit);
+    const page = parseInt(req.params.page);
+    const search = req.params.search;
+
+    // const datePeriode = new Date(initialPeriode);
+    // const dataYear = date.format(datePeriode, 'YYYY');
+    // const dataMonth = date.format(datePeriode, 'MM');
+
+    // console.log(dataYear, dataMonth);
+
+    const offset = (page - 1) * limit;
+    
+    try {
+        const response = await Pendapatan.findAndCountAll({
+            limit:limit,
+            offset:offset,
+            include:[
+                {
+                    model:Users,
+                    attributes:['uuid','name','nik'],
+                    where:{
+                        [Op.or]:[
+                            {
+                                name:{
+                                    [Op.like]:`%${search}%`
+                                }
+                            },
+                            {
+                                nik:{
+                                    [Op.like]:`%${search}%`
+                                }
+                            }
+                        ]
+                    },
+                }
+            ]
+        });
+
+        // console.log(response);
+
+        return res.status(200).json(response);
+    } catch (error) {
+        return res.status(500).json({msg: error})
+    }
+}
+
+export const getPendapatanTableSearchById = async(req, res) => {
+    const limit = parseInt(req.params.limit);
+    const page = parseInt(req.params.page);
+    const id = req.params.id;
+    const search = req.params.search;
+    const type = req.params.type;
+
+    console.log(search, 'id search')
+
+    // const datePeriode = new Date(initialPeriode);
+    // const dataYear = date.format(datePeriode, 'YYYY');
+    // const dataMonth = date.format(datePeriode, 'MM');
+
+    // console.log(dataYear, dataMonth);
+
+    const offset = (page - 1) * limit;
+    
+    try {
+        const response = await Pendapatan.findAndCountAll({
+            limit:limit,
+            offset:offset,
+            include:[
+                {
+                    model:Users,
+                    attributes:['uuid','name','nik'],
+                    where:{
+                            uuid:id
+                        }
+                }
+            ],
+            where:[
+                    {
+                        tipePendapatanId:type
+                    },
+                    {
+                        [Op.or]:[
+                            {
+                                pendapatanAtas:{
+                                    [Op.like]:`%${search}%`
+                                }
+                            }
+                        ]
+                    }
+                ]
+        });
+
+        // console.log(response);
+
+        return res.status(200).json(response);
+    } catch (error) {
+        return res.status(500).json({msg: error})
+    }
+}
+
+export const getPendapatanTableById = async(req, res) => {
+    const limit = parseInt(req.params.limit);
+    const page = parseInt(req.params.page);
+    const id = req.params.id;
+    const type = req.params.type;
+
+    console.log(id, 'id saja')
+
+    // const datePeriode = new Date(initialPeriode);
+    // const dataYear = date.format(datePeriode, 'YYYY');
+    // const dataMonth = date.format(datePeriode, 'MM');
+
+    // console.log(dataYear, dataMonth);
+
+    const offset = (page - 1) * limit;
+    
+    try {
+        const response = await Pendapatan.findAndCountAll({
+            limit:limit,
+            offset:offset,
+            include:[
+                {
+                    model:Users,
+                    attributes:['uuid','name','nik'],
+                    where:{
+                        uuid:id
+                    }
+                }
+            ],
+            where:{
+                tipePendapatanId:type
+            }
+        });
+
+        // console.log(response);
+
+        return res.status(200).json(response);
+    } catch (error) {
+        return res.status(500).json({msg: error})
     }
 }
 
@@ -66,6 +212,16 @@ export const getPendapatanByUser = async(req, res) => {
 export const getPendapatanById = async(req, res) => {
     try {
         const response = await Pendapatan.findOne({
+            include:[
+                {
+                    model:Users,
+                    attributes:['uuid','name','nik'],
+                    include:{
+                        model:Group,
+                        attributes:['uuid','name']
+                    }
+                }
+            ],
             where:{
                 uuid:req.params.id
             }
@@ -302,14 +458,16 @@ export const importPendapatans = async(req, res) => {
                 });
 
                 const date = moment(data[i].periode).format("YYYY-MM-DD");
+                const initialDate = moment(data[i].periode).format("MMMM YYYY");
 
-                console.log(data[i].periode, 'date');
+                console.log(initialDate, 'initial date');
 
                 await Pendapatan.create({
                     tipePendapatanId:data[i].tipePendapatanId, 
                     userId:user.id, 
                     pendapatanAtas:data[i].pendapatanAtas, 
                     periode:date,
+                    initialPeriode:initialDate,
                     basicSalary:data[i].basicSalary, 
                     kjk:data[i].kjk, 
                     tunjanganJabatan:data[i].tunjanganJabatan,
