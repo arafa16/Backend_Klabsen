@@ -43,7 +43,7 @@ export const getJamOperasionalById = async(req, res) => {
 }
 
 export const createJamOperasional = async(req, res) => {
-    const {name, jamMasuk, jamPulang, code, keterangan, isActive} = req.body;
+    const {name, jamMasuk, jamPulang, code, keterangan, tipeAbsenId, isActive} = req.body;
     try {
         await JamOperasional.create({
             name:name,
@@ -51,6 +51,7 @@ export const createJamOperasional = async(req, res) => {
             jamPulang:jamPulang,
             keterangan:keterangan,
             code:code,
+            tipeAbsenId:tipeAbsenId,
             isActive:isActive
         });
 

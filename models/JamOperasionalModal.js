@@ -1,5 +1,6 @@
 import {Sequelize} from 'sequelize';
 import db from '../config/Database.js';
+import TipeAbsen from './TipeAbsenModal.js';
 
 const {DataTypes} = Sequelize;
 
@@ -41,10 +42,20 @@ const JamOperasional = db.define('jam_operasional', {
         type: DataTypes.STRING,
         allowNull:true
     },
+    tipeAbsenId:{
+        type: DataTypes.INTEGER,
+        allowNull:false,
+        validate:{
+            notEmpty: true
+        }
+    },
     isActive:{
         type: DataTypes.BOOLEAN,
         defaultValue:true
     }
 });
+
+TipeAbsen.hasMany(JamOperasional);
+JamOperasional.belongsTo(TipeAbsen, {foreignKey: 'tipeAbsenId'});
 
 export default JamOperasional;

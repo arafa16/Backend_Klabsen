@@ -7,6 +7,8 @@ import { FingerprintSolution } from "fingerprint-solution";
 import date from 'date-and-time';
 import Koreksi from "../models/KoreksiModal.js";
 import StatusKoreksi from "../models/StatusKoreksiModal.js";
+import { Op } from "sequelize";
+import JamOperasional from "../models/JamOperasionalModal.js";
 
 export const getInOut = async(req, res) => {
     try {
@@ -232,37 +234,114 @@ export const deleteInOut = async(req, res) => {
 // get data finger mesin
 
 export const getDataFinger = async(req, res) => {
+    const dataZonk = [];
+    const dataBelumAbsen = [];
+    const dataBelumAbsenMasuk = [];
+    const dataBelumAbsenPulang = [];
+    const dataSudahAbsen = [];
+
     try {
-        const datas = await FingerprintSolution.download('103.160.12.57:8070', []);
+        const datas = await FingerprintSolution.download('20.30.3.4', []);
         const dateNow = new Date();
-        dateNow.setDate(dateNow.getDate() - 30);
+        dateNow.setDate(dateNow.getDate() - 14);
         const min = date.format(dateNow, 'YYYY-MM-DD HH:mm:ss');
-        // const absen = datas.filter(data=>data.time > min);
+
         const absen = datas.filter(
-            data=>data.pin==1107 
-            // && data.status == 1
+            data=>
+            data.status == 0 &&
+            data.time > min
             );
 
-        absen.map(async (data)=>{
-
-            const status = await TipeAbsen.findOne({
+        await Promise.all(absen.map(async (data)=>{
+            const findUser = await Users.findOne({
                 where:{
-                    code:data.status
+                    absenId:data.pin
                 }
             });
 
-            await InOut.create({
-                userId:1,
-                tanggalMulai:data.time,
-                tanggalSelesai:data.time,
-                tipeAbsenId:status.id,
-                pelanggaranId:1,
-                statusInoutId:1,
-            });
-        });
-        console.log(absen);
-        res.status(200).json(absen);
+            if(findUser === null){
+                console.log(data.pin, 'id user tidak di temukan di sistem');
+                dataZonk.push(data.pin);
+            }
+
+            else{
+
+                const findTipeAbsen = await TipeAbsen.findOne({
+                    where:{
+                        code:data.status
+                    }
+                })
+    
+                const findInOut = await InOut.findOne({
+                    where:{
+                        userId:findUser.id,
+                        tipeAbsenId:findTipeAbsen.id,
+                        tanggalMulai:data.time
+                    }
+                })
+    
+                if(findInOut === null){
+                    if(data.status == 0){
+                        const timeFind = new Date(data.time);
+                        const timeFormat = date.format(timeFind, 'HH:mm:ss');
+
+                        const findJamOperasionals = await JamOperasional.findOne({
+                            where:{
+                                jamMasuk:{ [Op.gte]: timeFormat }
+                            }
+                        })
+
+                        const findJamOperasionalsTerakhir = await JamOperasional.findAll({
+                            limit:1,
+                            where:{
+                                tipeAbsenId:1,
+                            },
+                            order: [ [ 'createdAt', 'DESC' ]]
+                        });
+
+                        const uploadAbsen = await InOut.create({
+                            userId:findUser.id,
+                            tipeAbsenId:findTipeAbsen.id,
+                            tanggalMulai:data.time,
+                            tanggalSelesai:data.time,
+                            pelanggaranId:1,
+                            statusInoutId:1,
+                            jamOperasionalId:findJamOperasionals.id,
+                        });
+
+                        dataBelumAbsenMasuk.push(data, timeFormat, findJamOperasionals, findJamOperasionalsTerakhir);
+
+                    }
+                    else if (data.status == 1) {
+                        const dateFind = new Date(data.time);
+                        const dateFormat = date.format(dateFind, 'YYYY-MM-DD');
+
+                        const findInOut = await InOut.findOne({
+                            whereDate:{
+                                tanggalMulai:dateFormat
+                            }
+                        })
+
+                        // const findJamOperasionals = await JamOperasional.findOne({
+                        //     where:{
+                        //         jamPulang:{ [Op.gte]: timeFormat }
+                        //     }
+                        // })
+
+                        dataBelumAbsenPulang.push(data, findInOut);
+                    } else {
+                        dataBelumAbsen.push(data);
+                    }
+                    
+                }
+                else{
+                    dataSudahAbsen.push(findInOut.id);
+                }
+            }
+        }));
+
+        res.status(200).json({msg: "success", dataZonk, dataBelumAbsen, dataBelumAbsenMasuk, dataBelumAbsenPulang, dataSudahAbsen});
     } catch (error) {
-        res.status(500).json({msg : error});
+        return res.status(500).json({msg : error});
     }
 }

@@ -4,6 +4,7 @@ import Users from './UsersModel.js';
 import TipeAbsen from './TipeAbsenModal.js';
 import Pelanggaran from './PelanggaranModal.js';
 import StatusInout from './StatusInoutModal.js';
+import JamOperasional from './JamOperasionalModal.js';
 
 const {DataTypes} = Sequelize;
 
@@ -46,17 +47,15 @@ const InOut = db.define('in_out', {
     },
     pelanggaranId:{
         type: DataTypes.INTEGER,
-        allowNull:false,
-        validate:{
-            notEmpty: true
-        }
+        allowNull:true
     },
     statusInoutId:{
         type: DataTypes.INTEGER,
-        allowNull:false,
-        validate:{
-            notEmpty: true
-        }
+        allowNull:true
+    },
+    jamOperasionalId:{
+        type: DataTypes.INTEGER,
+        allowNull:true
     },
     isActive:{
         type: DataTypes.BOOLEAN,
@@ -76,5 +75,8 @@ InOut.belongsTo(Pelanggaran, {foreignKey: 'pelanggaranId'});
 
 StatusInout.hasMany(InOut);
 InOut.belongsTo(StatusInout, {foreignKey: 'statusInoutId'});
+
+JamOperasional.hasMany(InOut);
+InOut.belongsTo(JamOperasional, {foreignKey: 'jamOperasionalId'});
 
 export default InOut;
