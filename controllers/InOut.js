@@ -241,18 +241,25 @@ export const getDataFinger = async(req, res) => {
     const dataSudahAbsen = [];
 
     try {
-        const datas = await FingerprintSolution.download('20.30.3.4', []);
+        const datas = await FingerprintSolution.download('202.152.5.198:8070', []);
         const dateNow = new Date();
         dateNow.setDate(dateNow.getDate() - 14);
         const min = date.format(dateNow, 'YYYY-MM-DD HH:mm:ss');
 
-        const absen = datas.filter(
+        const absenMasuk = datas.filter(
             data=>
             data.status == 0 &&
             data.time > min
             );
 
-        await Promise.all(absen.map(async (data)=>{
+        const absenPulang = datas.filter(
+            data=>
+            data.status == 1 &&
+            data.time > min
+            );
+
+        //submit absen masuk
+        await Promise.all(absenMasuk.map(async (data)=>{
             const findUser = await Users.findOne({
                 where:{
                     absenId:data.pin
@@ -263,9 +270,7 @@ export const getDataFinger = async(req, res) => {
                 console.log(data.pin, 'id user tidak di temukan di sistem');
                 dataZonk.push(data.pin);
             }
-
             else{
-
                 const findTipeAbsen = await TipeAbsen.findOne({
                     where:{
                         code:data.status
@@ -281,24 +286,26 @@ export const getDataFinger = async(req, res) => {
                 })
     
                 if(findInOut === null){
-                    if(data.status == 0){
-                        const timeFind = new Date(data.time);
-                        const timeFormat = date.format(timeFind, 'HH:mm:ss');
+                    
+                    const timeFind = new Date(data.time);
+                    const timeFormat = date.format(timeFind, 'HH:mm:ss');
+                    const dateTimeFormat = date.format(timeFind, 'YYYY-MM-DD HH:mm:ss');
 
-                        const findJamOperasionals = await JamOperasional.findOne({
-                            where:{
-                                jamMasuk:{ [Op.gte]: timeFormat }
-                            }
-                        })
+                    const findJamOperasionals = await JamOperasional.findOne({
+                        where:{
+                            jamMasuk:{ [Op.gte]: timeFormat }
+                        }
+                    })
 
-                        const findJamOperasionalsTerakhir = await JamOperasional.findAll({
-                            limit:1,
-                            where:{
-                                tipeAbsenId:1,
-                            },
-                            order: [ [ 'createdAt', 'DESC' ]]
-                        });
+                    const findJamOperasionalsTerakhir = await JamOperasional.findAll({
+                        limit:1,
+                        where:{
+                            tipeAbsenId:1,
+                        },
+                        order: [ [ 'createdAt', 'DESC' ]]
+                    });
 
+                    if(findJamOperasionals !== null){
                         const uploadAbsen = await InOut.create({
                             userId:findUser.id,
                             tipeAbsenId:findTipeAbsen.id,
@@ -308,35 +315,143 @@ export const getDataFinger = async(req, res) => {
                             statusInoutId:1,
                             jamOperasionalId:findJamOperasionals.id,
                         });
-
-                        dataBelumAbsenMasuk.push(data, timeFormat, findJamOperasionals, findJamOperasionalsTerakhir);
-
                     }
-                    else if (data.status == 1) {
-                        const dateFind = new Date(data.time);
-                        const dateFormat = date.format(dateFind, 'YYYY-MM-DD');
-
-                        const findInOut = await InOut.findOne({
-                            whereDate:{
-                                tanggalMulai:dateFormat
-                            }
-                        })
-
-                        // const findJamOperasionals = await JamOperasional.findOne({
-                        //     where:{
-                        //         jamPulang:{ [Op.gte]: timeFormat }
-                        //     }
-                        // })
-
-                        dataBelumAbsenPulang.push(data, findInOut);
-                    } else {
-                        dataBelumAbsen.push(data);
+                    else{
+                        if(timeFormat > findJamOperasionalsTerakhir[0].jamMasuk){
+                            const uploadAbsen = await InOut.create({
+                                userId:findUser.id,
+                                tipeAbsenId:findTipeAbsen.id,
+                                tanggalMulai:data.time,
+                                tanggalSelesai:data.time,
+                                pelanggaranId:2,
+                                statusInoutId:1,
+                                jamOperasionalId:findJamOperasionalsTerakhir[0].id
+                            });
+                        }
+                        else{
+                            const uploadAbsen = await InOut.create({
+                                userId:findUser.id,
+                                tipeAbsenId:findTipeAbsen.id,
+                                tanggalMulai:data.time,
+                                tanggalSelesai:data.time,
+                                pelanggaranId:1,
+                                statusInoutId:1,
+                                jamOperasionalId:findJamOperasionalsTerakhir[0].id
+                            });
+                        }
                     }
+
+                    dataBelumAbsenMasuk.push(data, timeFormat, dateTimeFormat, findJamOperasionals, findJamOperasionalsTerakhir[0].id);
+
                     
                 }
                 else{
-                    dataSudahAbsen.push(findInOut.id);
+                    dataSudahAbsen.push(findInOut);
                 }
+            }
+        }));
+
+        //submit absen pulang
+        await Promise.all(absenPulang.map(async (data)=>{
+            const findUser = await Users.findOne({
+                where:{
+                    absenId:data.pin
+                }
+            });
+
+            const findTipeAbsen = await TipeAbsen.findOne({
+                where:{
+                    code:data.status
+                }
+            })
+
+            if(findUser === null){
+                console.log(data.pin, 'id user tidak di temukan di sistem');
+                dataZonk.push(data.pin);
+            }
+            else{
+                const dateFind = new Date(data.time);
+                const timeFormat = date.format(dateFind, 'HH:mm:ss');
+                const dateFormat = date.format(dateFind, 'YYYY-MM-DD');
+
+                const findIn = await InOut.findOne({
+                    where:{
+                        tanggalMulai:{
+                            [Op.and]: {
+                                [Op.gte]: dateFormat + ' 00:00:00',
+                                [Op.lte]: dateFormat + ' 23:59:59',
+                                }
+                        }
+                    }
+                })
+
+                const findInOut = await InOut.findOne({
+                    where:{
+                        userId:findUser.id,
+                        tipeAbsenId:findTipeAbsen.id,
+                        tanggalMulai:data.time
+                    }
+                })
+
+                const findJamOperasionalsTerakhir = await JamOperasional.findAll({
+                    limit:1,
+                    where:{
+                        tipeAbsenId:1,
+                    },
+                    order: [ [ 'createdAt', 'DESC' ]]
+                });
+
+                if(findInOut !== null){
+                    console.log('sudah absen');
+                }
+                else{
+                    dataBelumAbsenPulang.push(data, dateFormat, findIn);
+
+                    if(findIn === null){
+                        
+                        //mencari id tipe absen code 9 (tipe tidak absen masuk)
+                        const tipeTidakAbsen = await TipeAbsen.findOne({
+                            where:{
+                                code:9
+                            }
+                        })
+
+                        //tidak absen masuk -> upload absen type 9 (tidak absen masuk)
+                        await InOut.create({
+                            userId:findUser.id,
+                            tipeAbsenId:tipeTidakAbsen.id,
+                            tanggalMulai:dateFormat + ' 00:00:00',
+                            tanggalSelesai:dateFormat + ' 00:00:00',
+                            pelanggaranId:2,
+                            statusInoutId:1,
+                            jamOperasionalId:findJamOperasionalsTerakhir[0].id
+                        });
+                        
+                        //tidak ditemukan absen masuk -> upload absen pulang
+                        const uploadAbsenPulang = await InOut.create({
+                            userId:findUser.id,
+                            tipeAbsenId:findTipeAbsen.id,
+                            tanggalMulai:data.time,
+                            tanggalSelesai:data.time,
+                            pelanggaranId:1,
+                            statusInoutId:1,
+                            jamOperasionalId:findJamOperasionalsTerakhir[0].id
+                        });
+                    }
+                    else{
+                        //absen masuk ditemukan -> upload absen pulang 
+                        await InOut.create({
+                            userId:findUser.id,
+                            tipeAbsenId:findTipeAbsen.id,
+                            tanggalMulai:data.time,
+                            tanggalSelesai:data.time,
+                            pelanggaranId:1,
+                            statusInoutId:1,
+                            jamOperasionalId:findIn.jamOperasionalId
+                        });
+                    }
+                }
+
             }
         }));
 
