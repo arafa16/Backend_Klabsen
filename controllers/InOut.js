@@ -428,7 +428,7 @@ export const getDataFinger = async(req, res) => {
                         });
                         
                         //tidak ditemukan absen masuk -> upload absen pulang
-                        const uploadAbsenPulang = await InOut.create({
+                        await InOut.create({
                             userId:findUser.id,
                             tipeAbsenId:findTipeAbsen.id,
                             tanggalMulai:data.time,
