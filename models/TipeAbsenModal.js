@@ -20,7 +20,7 @@ const TipeAbsen = db.define('tipe_absen', {
         }
     },
     code:{
-        type: DataTypes.STRING,
+        type: DataTypes.DECIMAL,
         allowNull:true
     },
     isActive:{

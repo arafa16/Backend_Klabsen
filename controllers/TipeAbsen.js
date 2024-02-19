@@ -2,7 +2,9 @@ import TipeAbsen from "../models/TipeAbsenModal.js";
 
 export const getTipeAbsen = async(req, res) => {
     try {
-        const response = await TipeAbsen.findAll();
+        const response = await TipeAbsen.findAll({
+            order: [ [ 'code', 'DESC' ]]
+        });
 
         return res.status(200).json(response);
     } catch (error) {
@@ -19,7 +21,10 @@ export const getTipeAbsenTable = async(req, res) => {
     try {
         const response = await TipeAbsen.findAndCountAll({
             limit:limit,
-            offset:offset
+            offset:offset,
+            order: [
+                ['code', 'ASC']
+            ]
         });
 
         return res.status(200).json(response);

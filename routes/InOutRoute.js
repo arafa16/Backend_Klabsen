@@ -1,6 +1,7 @@
 import express from 'express';
 import { 
     createInOut, 
+    createInOutByAbsenWeb, 
     deleteInOut, 
     getDataFinger, 
     getInOut, 
@@ -16,6 +17,7 @@ route.get('/inOuts', getInOut);
 route.get('/inOuts/:id', getInOutById);
 route.get('/inOuts/user/:id', getInOutByUser);
 route.post('/inOuts', createInOut);
+route.post('/InOutsByAbsenWeb', createInOutByAbsenWeb);
 route.patch('/inOuts/:id', updateInOut);
 route.delete('/inOuts/:id', deleteInOut);
 

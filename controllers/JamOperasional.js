@@ -1,4 +1,5 @@
 import JamOperasional from "../models/JamOperasionalModal.js";
+import TipeAbsen from "../models/TipeAbsenModal.js";
 
 export const getJamOperasionals = async(req, res) => {
     try {
@@ -19,7 +20,10 @@ export const getJamOperasionalsTable = async(req, res) => {
     try {
         const response = await JamOperasional.findAndCountAll({
             limit:limit,
-            offset:offset
+            offset:offset,
+            include:{
+                model:TipeAbsen
+            }
         });
 
         return res.status(200).json(response);
@@ -62,7 +66,7 @@ export const createJamOperasional = async(req, res) => {
 }
 
 export const updateJamOperasional = async(req, res) => {
-    const {name, jamMasuk, jamPulang, code, keterangan, isActive} = req.body;
+    const {name, jamMasuk, jamPulang, code, keterangan, tipeAbsenId, isActive} = req.body;
 
     const response = await JamOperasional.findOne({
         where:{
@@ -79,6 +83,7 @@ export const updateJamOperasional = async(req, res) => {
             jamPulang:jamPulang,
             keterangan:keterangan,
             code:code,
+            tipeAbsenId:tipeAbsenId,
             isActive:isActive
         });
 

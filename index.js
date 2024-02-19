@@ -5,7 +5,10 @@ import session from 'express-session';
 import SequelizeStore from 'connect-session-sequelize';
 import db from './config/Database.js';
 import fileUpload from 'express-fileupload';
+//controller
+import { getDataFinger, testInOut } from './controllers/InOut.js';
 
+//route
 import UserRoute from './routes/UserRoute.js';
 import GanderRoute from './routes/GanderRoute.js';
 import PendidikanRoute from './routes/PendidikanRoute.js';
@@ -33,7 +36,7 @@ import AtasanRoute from './routes/AtasanRoute.js';
 import StatusKoreksi from './routes/StatusKoreksiRoute.js'
 import InOut from './routes/InOutRoute.js'
 import Privilege from './routes/PrivilegeRoute.js';
-
+import cron from 'node-cron';
 
 const app = express();
 dotenv.config();
@@ -99,7 +102,26 @@ app.use(Privilege);
 //setup public folder
 app.use(express.static("public"));
 
-// store.sync();
+store.sync();
+
+
+//jadwal penarikan data absen
+cron.schedule('*/10 * * * *', function() {
+    testInOut('202.152.5.198:8070').then(
+        ()=>{
+            console.log('penarikan rukan mulai');
+            testInOut('103.160.12.10').then(()=>{
+                    console.log('penarikan tebet mulai')
+                    testInOut('103.171.31.60').then(()=>{
+                            console.log('penarikan cipinang');
+                            testInOut('183.91.71.228:9001').then(()=>{
+                                console.log('penarikan bandung');
+                                testInOut('183.91.71.228:9080')
+                            });
+                        });
+                });
+        });
+});
 
 app.listen(process.env.PORT,()=>{
     console.log(`server running at port ${process.env.PORT}`)

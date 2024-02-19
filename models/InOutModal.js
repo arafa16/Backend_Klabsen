@@ -57,6 +57,10 @@ const InOut = db.define('in_out', {
         type: DataTypes.INTEGER,
         allowNull:true
     },
+    isAbsenWeb:{
+        type: DataTypes.BOOLEAN,
+        defaultValue:false
+    },
     isActive:{
         type: DataTypes.BOOLEAN,
         defaultValue:true
