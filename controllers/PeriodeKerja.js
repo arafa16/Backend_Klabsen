@@ -4,12 +4,7 @@ import Status from "../models/StatusModel.js";
 
 export const getPeriode = async(req, res) => {
     try {
-        const response = await PeriodeKerja.findAll({
-            include:{
-                model:Status,
-                attributes:['uuid','name']
-            }
-        });
+        const response = await PeriodeKerja.findAll();
 
         return res.status(200).json(response);
     } catch (error) {
@@ -26,11 +21,7 @@ export const getPeriodeTable = async(req, res) => {
     try {
         const response = await PeriodeKerja.findAndCountAll({
             limit:limit,
-            offset:offset,
-            include:{
-                model:Status,
-                attributes:['uuid','name']
-            }
+            offset:offset
         });
 
         return res.status(200).json(response);
@@ -44,10 +35,6 @@ export const getPeriodeById = async(req, res) => {
         const response = await PeriodeKerja.findOne({
             where:{
                 uuid:req.params.id
-            },
-            include:{
-                model:Status,
-                attributes:['uuid','name']
             }
         });
 
@@ -58,21 +45,17 @@ export const getPeriodeById = async(req, res) => {
 }
 
 export const createPeriode = async(req, res) => {
-    const {nameBulan, tanggalMulai, tanggalSelesai, jumlahHari, statusId, isActive} = req.body;
-
-    const status = await Status.findOne({
-        where:{
-            uuid:statusId
-        }
-    });
+    const {name, bulan, tahun, tanggalMulai, tanggalSelesai, jumlahHari, code, isActive} = req.body;
 
     try {
         await PeriodeKerja.create({
-            nameBulan:nameBulan,
+            name:name,
+            bulan:bulan,
+            tahun:tahun,
             tanggalMulai:tanggalMulai,
             tanggalSelesai:tanggalSelesai,
             jumlahHari:jumlahHari,
-            statusId:status && status.id,
+            code:code,
             isActive:isActive
         });
 
@@ -83,7 +66,7 @@ export const createPeriode = async(req, res) => {
 }
 
 export const updatePeriode = async(req, res) => {
-    const {nameBulan, tanggalMulai, tanggalSelesai, jumlahHari, statusId, isActive} = req.body;
+    const {name, bulan, tahun, tanggalMulai, tanggalSelesai, jumlahHari, code, isActive} = req.body;
 
     const response = await PeriodeKerja.findOne({
         where:{
@@ -93,19 +76,15 @@ export const updatePeriode = async(req, res) => {
 
     if(!response) return res.status(404).json({msg: "not found"});
 
-    const status = await Status.findOne({
-        where:{
-            uuid:statusId
-        }
-    });
-
     try {
         response.update({
-            nameBulan:nameBulan,
+            name:name,
+            bulan:bulan,
+            tahun:tahun,
             tanggalMulai:tanggalMulai,
             tanggalSelesai:tanggalSelesai,
             jumlahHari:jumlahHari,
-            statusId:status && status.id,
+            code:code,
             isActive:isActive
         });
 
@@ -116,6 +95,7 @@ export const updatePeriode = async(req, res) => {
 }
 
 export const deletePeriode = async(req, res) => {
+    
     const response = await PeriodeKerja.findOne({
         where:{
             uuid:req.params.id

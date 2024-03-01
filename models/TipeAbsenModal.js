@@ -23,6 +23,10 @@ const TipeAbsen = db.define('tipe_absen', {
         type: DataTypes.DECIMAL,
         allowNull:true
     },
+    isSelect:{
+        type: DataTypes.BOOLEAN,
+        defaultValue:true
+    },
     isActive:{
         type: DataTypes.BOOLEAN,
         defaultValue:true

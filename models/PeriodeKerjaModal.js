@@ -13,8 +13,22 @@ const PeriodeKerja = db.define('periode_kerja', {
             notEmpty: true
         }
     },
-    nameBulan:{
+    name:{
         type: DataTypes.STRING,
+        allowNull:false,
+        validate:{
+            notEmpty: true
+        }
+    },
+    bulan:{
+        type: DataTypes.DECIMAL,
+        allowNull:false,
+        validate:{
+            notEmpty: true
+        }
+    },
+    tahun:{
+        type: DataTypes.DECIMAL,
         allowNull:false,
         validate:{
             notEmpty: true

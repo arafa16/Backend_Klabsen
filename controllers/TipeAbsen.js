@@ -48,12 +48,13 @@ export const getTipeAbsenById = async(req, res) => {
 }
 
 export const createTipeAbsen = async(req, res) => {
-    const {code, name, isActive} = req.body;
+    const {code, name, isSelect, isActive} = req.body;
 
     try {
         await TipeAbsen.create({
             code:code,
             name:name,
+            isSelect:isSelect,
             isActive:isActive
         });
 
@@ -64,7 +65,7 @@ export const createTipeAbsen = async(req, res) => {
 }
 
 export const updateTipeAbsen = async(req, res) => {
-    const {code, name, isActive} = req.body;
+    const {code, name, isSelect, isActive} = req.body;
 
     const response = await TipeAbsen.findOne({
         where:{
@@ -78,6 +79,7 @@ export const updateTipeAbsen = async(req, res) => {
         response.update({
             code:code,
             name:name,
+            isSelect:isSelect,
             isActive:isActive
         });
 

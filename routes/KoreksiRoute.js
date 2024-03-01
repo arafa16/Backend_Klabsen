@@ -9,7 +9,8 @@ import {
     getKoreksiTableByApprover, 
     approveKoreksi,
     getKoreksiByApprover,
-    getKoreksiByUser
+    getKoreksiByUser,
+    createKoreksiByDate
 } from '../controllers/Koreksi.js';
 
 const route = express.Router();
@@ -22,6 +23,7 @@ route.get('/koreksis/:id/user', getKoreksiByUser);
 route.get('/koreksis/:id', getKoreksiById);
 route.get('/koreksis', getKoreksi);
 route.post('/koreksis', createKoreksi);
+route.post('/koreksis/byDate', createKoreksiByDate);
 route.patch('/koreksis/:id/approve', approveKoreksi);
 route.patch('/koreksis/:id', updateKoreksi);
 route.delete('/koreksis/:id', deleteKoreksi);

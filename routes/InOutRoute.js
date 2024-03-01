@@ -3,6 +3,7 @@ import {
     createInOut, 
     createInOutByAbsenWeb, 
     deleteInOut, 
+    getDataByFinger, 
     getDataFinger, 
     getInOut, 
     getInOutById, 
@@ -22,5 +23,6 @@ route.patch('/inOuts/:id', updateInOut);
 route.delete('/inOuts/:id', deleteInOut);
 
 route.get('/inOutMesin', getDataFinger);
+route.get('/inOutMesinByFinger', getDataByFinger);
 
 export default route;

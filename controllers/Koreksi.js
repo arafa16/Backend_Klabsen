@@ -7,6 +7,7 @@ import TipeAbsen from "../models/TipeAbsenModal.js";
 import Pelanggaran from "../models/PelanggaranModal.js";
 import Status from "../models/StatusModel.js";
 import StatusInout from "../models/StatusInoutModal.js";
+import JamOperasional from "../models/JamOperasionalModal.js";
 
 export const getKoreksi = async(req, res) => {
     try {
@@ -400,6 +401,95 @@ export const createKoreksi = async(req, res) => {
 
         return res.status(201).json({msg: "koreksi success created"});
     } catch (error) {
+        return res.status(500).json({msg: error.message});
+    }
+}
+
+export const createKoreksiByDate = async(req, res) => {
+    const {userId, tanggalMulai, tanggalSelesai, tipeAbsenId, codePelanggaran, keterangan, codeStatusKoreksi, isActive, codeStatusInout, jamOperasionalId, isAbsenWeb} = req.body;
+
+    const user = await Users.findOne({
+        where:{
+            uuid:userId
+        }
+    });
+
+    if(!user) return res.status(404).json({msg: "user not found"});
+
+    const statusKoreksi = await StatusKoreksi.findOne({
+        where:{
+            code:codeStatusKoreksi
+        }
+    });
+
+    if(!statusKoreksi) return res.status(404).json({msg: "status koreksi not found"});
+
+    const tipeAbsen = await TipeAbsen.findOne({
+        where:{
+            uuid:tipeAbsenId
+        }
+    });
+
+    if(!tipeAbsen) return res.status(404).json({msg: "tipe absen not found"});
+
+    const pelanggaran = await Pelanggaran.findOne({
+        where:{
+            code:codePelanggaran
+        }
+    });
+
+    if(!pelanggaran) return res.status(404).json({msg: "pelanggaran not found"});
+
+
+    // const inOut = await InOut.findOne({
+    //     where:{
+    //         uuid:inOutId
+    //     }
+    // });
+
+    // if(!inOut) return res.status(404).json({msg: "absen not found"});
+
+    const statusInout = await StatusInout.findOne({
+        where:{
+            code:codeStatusInout
+        }
+    })
+
+    // console.log(statusInout, 'statusInout');
+
+    if(!statusInout) return res.status(404).json({msg: "status inout not found"});
+
+    const jamOperasional = await JamOperasional.findOne({
+        where:{
+            uuid:jamOperasionalId
+        }
+    });
+
+    if(!jamOperasional) return res.status(404).json({msg: "jam operasional not found"});
+
+    try {
+        const createInOut = await InOut.create({
+            userId:user && user.id,
+            tanggalMulai:tanggalMulai,
+            tanggalSelesai:tanggalSelesai,
+            tipeAbsenId:tipeAbsen && tipeAbsen.id,
+            pelanggaranId:pelanggaran && pelanggaran.id,
+            statusInoutId:statusInout && statusInout.id,
+            jamOperasionalId:jamOperasional && jamOperasional.id,
+            isAbsenWeb:isAbsenWeb
+        });
+
+        await Koreksi.create({
+            userId:user && user.id,
+            inOutId:createInOut.id,
+            keterangan:keterangan,
+            statusKoreksiId:statusKoreksi && statusKoreksi.id,
+            isActive:isActive
+        });
+
+        return res.status(201).json({msg: "koreksi success created"});
+    } catch (error) {
+        console.log(error.message);
         return res.status(500).json({msg: error.message});
     }
 }
