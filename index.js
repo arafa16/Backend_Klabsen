@@ -105,24 +105,25 @@ app.use(express.static("public"));
 store.sync();
 
 
-//jadwal penarikan data absen
-// cron.schedule('*/1 * * * *', function() {
-//     testInOut('202.152.5.198:8070').then(
-//         // ()=>{
-//         //     console.log('penarikan rukan mulai');
-//         //     testInOut('103.160.12.10').sthen(()=>{
-//         //             console.log('penarikan tebet mulai')
-//         //             testInOut('103.171.31.60').then(()=>{
-//         //                     console.log('penarikan cipinang');
-//         //                     testInOut('183.91.71.228:9001').then(()=>{
-//         //                         console.log('penarikan bandung');
-//         //                         testInOut('183.91.71.228:9080')
-//         //                     });
-//         //                 });
-//         //         });
-//         // }
-//         );
-// });
+// jadwal penarikan data absen
+cron.schedule('*/1 * * * *', function() {
+    testInOut('20.30.3.22').then(
+    // testInOut('202.152.5.198:8070').then(
+        // ()=>{
+        //     console.log('penarikan rukan mulai');
+        //     testInOut('103.160.12.10').sthen(()=>{
+        //             console.log('penarikan tebet mulai')
+        //             testInOut('103.171.31.60').then(()=>{
+        //                     console.log('penarikan cipinang');
+        //                     testInOut('183.91.71.228:9001').then(()=>{
+        //                         console.log('penarikan bandung');
+        //                         testInOut('183.91.71.228:9080')
+        //                     });
+        //                 });
+        //         });
+        // }
+        );
+});
 
 app.listen(process.env.PORT,()=>{
     console.log(`server running at port ${process.env.PORT}`)

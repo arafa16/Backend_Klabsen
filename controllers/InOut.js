@@ -1044,8 +1044,22 @@ export const testInOut = async(ip) => {
         const response = await JamOperasional.findAll({
             limit:1,
             where:{
-                tipeAbsenId:1,
+                // tipeAbsenId:1,
                 code:1
+            },
+            order: [ [ 'createdAt', 'DESC' ]]
+        });
+
+        return response
+    }
+
+    //find jam operasional terkahir digunakan jika tidak absen masuk
+    async function jamOperasionalsTerakhirCode(code) {
+        const response = await JamOperasional.findAll({
+            limit:1,
+            where:{
+                // tipeAbsenId:1,
+                code:code
             },
             order: [ [ 'createdAt', 'DESC' ]]
         });
@@ -1083,6 +1097,18 @@ export const testInOut = async(ip) => {
         const absenPulang = datas.filter(
             data=>
             data.status == 1 &&
+            data.time > min
+            );
+        
+        const absenShiftMasuk = datas.filter(
+            data=>
+            data.status == 4 &&
+            data.time > min
+            );
+        
+        const absenShiftPulang = datas.filter(
+            data=>
+            data.status == 5 &&
             data.time > min
             );
         
@@ -1138,7 +1164,7 @@ export const testInOut = async(ip) => {
                                 tanggalSelesai:dateTimeFormat,
                                 pelanggaranId:2,
                                 statusInoutId:1,
-                                jamOperasionalId:jamOperasionalTerakhir.id,
+                                jamOperasionalId:jamOperasionalTerakhir[0].id,
                             })
                         }
 
@@ -1209,36 +1235,76 @@ export const testInOut = async(ip) => {
                         })
 
                         if(!inCheck){
-                            dataNotFound.push(data.time, data.status, 'tidak ada absen masuk');
-                        }
-                        else{
-                            const jamOperasional = await findJamOperasionalById(inCheck.jamOperasionalId);
+                            dataNotFound.push(data.time, data.status, 'tidak ada absen masuk 29');
 
-                            if(!jamOperasional){
+                            const jamOperasionalTerakhir = await jamOperasionalsTerakhir();
 
-                            }
-                            else{
-                                const uploadAbsenNormal = await uploadAbsen({
+                            const tidakAbsen = await findTipeAbsen(11);
+
+                            //cek pulang dulu atau tidak
+                            if(jamOperasionalTerakhir[0].jamPulang < timeFormat){
+                                const uploadAbsenTidakMasuk = await uploadAbsen({
+                                    userId:user.id,
+                                    tipeAbsenId:tidakAbsen.id,
+                                    tanggalMulai:dateFormat + ' 00:00:00',
+                                    tanggalSelesai:dateFormat + ' 00:00:00',
+                                    pelanggaranId:2,
+                                    statusInoutId:1,
+                                    jamOperasionalId:jamOperasionalTerakhir[0].id,
+                                })
+
+                                const uploadAbsenPulangNormal = await uploadAbsen({
                                     userId:user.id,
                                     tipeAbsenId:tipeAbsen.id,
                                     tanggalMulai:dateTimeFormat,
                                     tanggalSelesai:dateTimeFormat,
                                     pelanggaranId:1,
                                     statusInoutId:1,
-                                    jamOperasionalId:jamOperasional.id,
+                                    jamOperasionalId:jamOperasionalTerakhir[0].id,
+                                })
+    
+                                dataExist.push(uploadAbsenTidakMasuk, uploadAbsenPulangNormal, 'absen pulang tidak masuk 29');
+                            }
+                            else{
+                                const uploadAbsenTidakMasuk = await uploadAbsen({
+                                    userId:user.id,
+                                    tipeAbsenId:tidakAbsen.id,
+                                    tanggalMulai:dateFormat + ' 00:00:00',
+                                    tanggalSelesai:dateFormat + ' 00:00:00',
+                                    pelanggaranId:2,
+                                    statusInoutId:1,
+                                    jamOperasionalId:jamOperasionalTerakhir[0].id,
                                 })
 
-
-
-                                dataExist.push(uploadAbsenNormal, 'absen normal pulang');
-
+                                const uploadAbsenPulangNormal = await uploadAbsen({
+                                    userId:user.id,
+                                    tipeAbsenId:tipeAbsen.id,
+                                    tanggalMulai:dateTimeFormat,
+                                    tanggalSelesai:dateTimeFormat,
+                                    pelanggaranId:2,
+                                    statusInoutId:1,
+                                    jamOperasionalId:jamOperasionalTerakhir[0].id,
+                                })
+    
+                                dataExist.push(uploadAbsenTidakMasuk, uploadAbsenPulangNormal, 'absen pulang tidak masuk 29');
                             }
-
+                        }
+                        else{
+                            dataDelete.push(inCheck, 'in check');
+                            
+                            const uploadAbsenNormal = await uploadAbsen({
+                                userId:user.id,
+                                tipeAbsenId:tipeAbsen.id,
+                                tanggalMulai:dateTimeFormat,
+                                tanggalSelesai:dateTimeFormat,
+                                pelanggaranId:1,
+                                statusInoutId:2,
+                                jamOperasionalId:inCheck.jamOperasionalId,
+                            })
                         }
                     }
                     //jika sudah ada absen
                     else{
-
                         const findDataOutDouble = await InOut.findAll({
                             where:{
                                 tanggalMulai:{
@@ -1267,7 +1333,209 @@ export const testInOut = async(ip) => {
 
         }))
 
-        await Promise.all(absenPulang.map(async (data)=>{
+        //submit absen shift masuk
+        const codeShiftMasuk = [4];
+
+        await Promise.all(absenShiftMasuk.map(async (data)=>{
+            const timeFind = new Date(data.time);
+            const timeFormat = date.format(timeFind, 'HH:mm:ss');
+            const dateFormat = date.format(timeFind, 'YYYY-MM-DD');
+            const dateTimeFormat = date.format(timeFind, 'YYYY-MM-DD HH:mm:ss');
+
+            //cari data user
+            const user = await findUser(data.pin);
+            
+            if(!user){
+                console.log('user not found 1')
+            }
+            else{
+
+                //cari tipe absen
+                const tipeAbsen = await findTipeAbsen(data.status);
+
+                if(!tipeAbsen){
+                    console.log('tipe not found 1')
+                }
+                else{
+                    //cari data absen jika sudah absen
+                    const inOut = await findInOut({
+                        userId:user.id,
+                        tipeAbsenId:tipeAbsen.id,
+                        tanggalMulai:data.time,
+                        dateFormat:dateFormat,
+                        code:codeShiftMasuk
+                    });
+
+                    //jika belum absen
+                    if(!inOut){
+                        const jamOperasional = await findJamOperasionals({
+                            timeFormat:timeFormat, 
+                            code:2
+                        });
+
+                        //jika telat
+                        if(!jamOperasional){
+                            const jamOperasionalTerakhir = await jamOperasionalsTerakhirCode(2);
+
+                            const uploadAbsenNormal = await uploadAbsen({
+                                userId:user.id,
+                                tipeAbsenId:tipeAbsen.id,
+                                tanggalMulai:dateTimeFormat,
+                                tanggalSelesai:dateTimeFormat,
+                                pelanggaranId:2,
+                                statusInoutId:1,
+                                jamOperasionalId:jamOperasionalTerakhir[0].id,
+                            })
+                        }
+
+                        //jika absen normal
+                        else{
+                            const uploadAbsenNormal = await uploadAbsen({
+                                userId:user.id,
+                                tipeAbsenId:tipeAbsen.id,
+                                tanggalMulai:dateTimeFormat,
+                                tanggalSelesai:dateTimeFormat,
+                                pelanggaranId:1,
+                                statusInoutId:1,
+                                jamOperasionalId:jamOperasional.id,
+                            })
+
+                            dataNotFound.push(dateTimeFormat, 'belum absen absen');
+                        }
+                    }
+
+                    // jika sudah absen
+                    else{
+                        // dataExist.push(inOut, 'sudah absen tipe absen id database');
+                    }
+                }
+            }
+        }));
+
+        //submit absen shift pulang
+        const codeShiftPulang = [5];
+
+        await Promise.all(absenShiftPulang.map(async (data)=>{
+            const timeFind = new Date(data.time);
+            const timeFormat = date.format(timeFind, 'HH:mm:ss');
+            const dateFormat = date.format(timeFind, 'YYYY-MM-DD');
+            const dateTimeFormat = date.format(timeFind, 'YYYY-MM-DD HH:mm:ss');
+
+            //cari data user
+            const user = await findUser(data.pin);
+
+            if(!user){
+                console.log('user not found 1')
+            }
+            else{
+                //cari tipe absen
+                const tipeAbsen = await findTipeAbsen(data.status);
+
+                if(!tipeAbsen){
+                    console.log('tipe not found 1')
+                }
+                else{
+                    //cari data absen jika sudah absen
+                    const inOut = await findInOut({
+                        userId:user.id,
+                        tipeAbsenId:tipeAbsen.id,
+                        tanggalMulai:data.time,
+                        dateFormat:dateFormat,
+                        code:codeShiftPulang
+                    });
+
+                    //jika belum absen
+                    if(!inOut){
+                        const inCheck = await findIn({
+                            userId:user.id,
+                            tipeAbsenId:tipeAbsen.id,
+                            tanggalMulai:data.time,
+                            dateFormat:dateFormat,
+                            code:codeMasuk
+                        })
+
+                        if(!inCheck){
+                            dataNotFound.push(data.time, data.status, 'tidak ada absen masuk 29');
+
+                            const jamOperasionalTerakhir = await jamOperasionalsTerakhirCode(2);
+
+                            const tidakAbsen = await findTipeAbsen(11);
+
+                            //cek pulang dulu atau tidak
+                            if(jamOperasionalTerakhir[0].jamPulang < timeFormat){
+                                
+                                const uploadAbsenPulangNormal = await uploadAbsen({
+                                    userId:user.id,
+                                    tipeAbsenId:tipeAbsen.id,
+                                    tanggalMulai:dateTimeFormat,
+                                    tanggalSelesai:dateTimeFormat,
+                                    pelanggaranId:1,
+                                    statusInoutId:1,
+                                    jamOperasionalId:jamOperasionalTerakhir[0].id,
+                                })
+    
+                                dataExist.push(uploadAbsenPulangNormal, 'absen pulang tidak masuk 29');
+                            }
+                            else{
+                                const uploadAbsenPulangNormal = await uploadAbsen({
+                                    userId:user.id,
+                                    tipeAbsenId:tipeAbsen.id,
+                                    tanggalMulai:dateTimeFormat,
+                                    tanggalSelesai:dateTimeFormat,
+                                    pelanggaranId:2,
+                                    statusInoutId:1,
+                                    jamOperasionalId:jamOperasionalTerakhir[0].id,
+                                })
+    
+                                dataExist.push(uploadAbsenPulangNormal, 'absen pulang tidak masuk 29');
+                            }
+                        }
+                        else{
+                            dataDelete.push(inCheck, 'in check');
+                            
+                            const uploadAbsenNormal = await uploadAbsen({
+                                userId:user.id,
+                                tipeAbsenId:tipeAbsen.id,
+                                tanggalMulai:dateTimeFormat,
+                                tanggalSelesai:dateTimeFormat,
+                                pelanggaranId:1,
+                                statusInoutId:2,
+                                jamOperasionalId:inCheck.jamOperasionalId,
+                            })
+                        }
+                    }
+                    //jika sudah ada absen
+                    else{
+                        const findDataOutDouble = await InOut.findAll({
+                            where:{
+                                tanggalMulai:{
+                                    [Op.and]: {
+                                        [Op.gte]: dateFormat + ' 00:00:00',
+                                        [Op.lte]: dateFormat + ' 23:59:59',
+                                    }
+                                }
+                            },
+                            include:{
+                                model:TipeAbsen,
+                                where:{
+                                    code: { [Op.in]: codePulang}
+                                }
+                            }
+                        });
+
+                        if(findDataOutDouble.length > 1){
+                            dataDouble.push(findDataOutDouble, 'pulang');
+                            dataDelete.push(findDataOutDouble[0], 'delete')
+                            await findDataOutDouble[0].destroy();
+                        }
+                    }
+                }
+            }
+
+        }));
+
+        //filter absen masuk
+        await Promise.all(absenMasuk.map(async (data)=>{
             const timeFind = new Date(data.time);
             const dateFormat = date.format(timeFind, 'YYYY-MM-DD');
             
@@ -1294,7 +1562,7 @@ export const testInOut = async(ip) => {
                         code:codePulang
                     });
 
-                    //jika belum absen
+                    //jika ada data
                     if(inOut !== null){
                         //cari data double untuk didelete
                         const findDataOutDouble = await InOut.findAll({
@@ -1328,16 +1596,200 @@ export const testInOut = async(ip) => {
 
         }))
 
-        console.log('success');
+        //filter absen pulang
+        await Promise.all(absenPulang.map(async (data)=>{
+            const timeFind = new Date(data.time);
+            const dateFormat = date.format(timeFind, 'YYYY-MM-DD');
+            
+            //cari data user
+            const user = await findUser(data.pin);
+
+            if(!user){
+                console.log('user not found 1')
+            }
+            else{
+                //cari tipe absen
+                const tipeAbsen = await findTipeAbsen(data.status);
+
+                if(!tipeAbsen){
+                    console.log('tipe not found 1')
+                }
+                else{
+                    //cari data absen jika sudah absen
+                    const inOut = await findInOut({
+                        userId:user.id,
+                        tipeAbsenId:tipeAbsen.id,
+                        tanggalMulai:data.time,
+                        dateFormat:dateFormat,
+                        code:codePulang
+                    });
+
+                    //jika ada data
+                    if(inOut !== null){
+                        //cari data double untuk didelete
+                        const findDataOutDouble = await InOut.findAll({
+                            where:{
+                                tanggalMulai:{
+                                    [Op.and]: {
+                                        [Op.gte]: dateFormat + ' 00:00:00',
+                                        [Op.lte]: dateFormat + ' 23:59:59',
+                                    }
+                                }
+                            },
+                            include:{
+                                model:TipeAbsen,
+                                where:{
+                                    code: { [Op.in]: codePulang}
+                                }
+                            }
+                        });
+
+                        //jika ada data double
+                        if(findDataOutDouble.length > 1){
+                            dataDouble.push(findDataOutDouble, 'pulang');
+                            dataDelete.push(findDataOutDouble[0], 'delete')
+                            
+                            //delete data
+                            await findDataOutDouble[0].destroy();
+                        }
+                    }
+                }
+            }
+
+        }))
+
+        //filter absen shift masuk
+        await Promise.all(absenShiftMasuk.map(async (data)=>{
+            const timeFind = new Date(data.time);
+            const dateFormat = date.format(timeFind, 'YYYY-MM-DD');
+            
+            //cari data user
+            const user = await findUser(data.pin);
+
+            if(!user){
+                console.log('user not found 1')
+            }
+            else{
+                //cari tipe absen
+                const tipeAbsen = await findTipeAbsen(data.status);
+
+                if(!tipeAbsen){
+                    console.log('tipe not found 1')
+                }
+                else{
+                    //cari data absen jika sudah absen
+                    const inOut = await findInOut({
+                        userId:user.id,
+                        tipeAbsenId:tipeAbsen.id,
+                        tanggalMulai:data.time,
+                        dateFormat:dateFormat,
+                        code:codeShiftMasuk
+                    });
+
+                    //jika ada data
+                    if(inOut !== null){
+                        //cari data double untuk didelete
+                        const findDataOutDouble = await InOut.findAll({
+                            where:{
+                                tanggalMulai:{
+                                    [Op.and]: {
+                                        [Op.gte]: dateFormat + ' 00:00:00',
+                                        [Op.lte]: dateFormat + ' 23:59:59',
+                                    }
+                                }
+                            },
+                            include:{
+                                model:TipeAbsen,
+                                where:{
+                                    code: { [Op.in]: codeShiftMasuk}
+                                }
+                            }
+                        });
+
+                        //jika ada data double
+                        if(findDataOutDouble.length > 1){
+                            dataDouble.push(findDataOutDouble, 'pulang');
+                            dataDelete.push(findDataOutDouble[0], 'delete')
+                            
+                            //delete data
+                            await findDataOutDouble[0].destroy();
+                        }
+                    }
+                }
+            }
+
+        }))
+
+        //filter absen shift pulang
+        await Promise.all(absenShiftPulang.map(async (data)=>{
+            const timeFind = new Date(data.time);
+            const dateFormat = date.format(timeFind, 'YYYY-MM-DD');
+            
+            //cari data user
+            const user = await findUser(data.pin);
+
+            if(!user){
+                console.log('user not found 1')
+            }
+            else{
+                //cari tipe absen
+                const tipeAbsen = await findTipeAbsen(data.status);
+
+                if(!tipeAbsen){
+                    console.log('tipe not found 1')
+                }
+                else{
+                    //cari data absen jika sudah absen
+                    const inOut = await findInOut({
+                        userId:user.id,
+                        tipeAbsenId:tipeAbsen.id,
+                        tanggalMulai:data.time,
+                        dateFormat:dateFormat,
+                        code:codeShiftPulang
+                    });
+
+                    //jika ada data
+                    if(inOut !== null){
+                        //cari data double untuk didelete
+                        const findDataOutDouble = await InOut.findAll({
+                            where:{
+                                tanggalMulai:{
+                                    [Op.and]: {
+                                        [Op.gte]: dateFormat + ' 00:00:00',
+                                        [Op.lte]: dateFormat + ' 23:59:59',
+                                    }
+                                }
+                            },
+                            include:{
+                                model:TipeAbsen,
+                                where:{
+                                    code: { [Op.in]: codeShiftPulang}
+                                }
+                            }
+                        });
+
+                        //jika ada data double
+                        if(findDataOutDouble.length > 1){
+                            dataDouble.push(findDataOutDouble, 'pulang');
+                            dataDelete.push(findDataOutDouble[0], 'delete')
+                            
+                            //delete data
+                            await findDataOutDouble[0].destroy();
+                        }
+                    }
+                }
+            }
+
+        }))
+
     } catch (error) {
-        console.log(error)
+        console.log(error);
     }
 }
 
 
 //get data finger yang clean
 export const getDataByFinger = async(req, res) => {
-
     const dataExist = [];
     const dataNotFound = [];
     const dataDouble = [];
@@ -1439,8 +1891,22 @@ export const getDataByFinger = async(req, res) => {
         const response = await JamOperasional.findAll({
             limit:1,
             where:{
-                tipeAbsenId:1,
+                // tipeAbsenId:1,
                 code:1
+            },
+            order: [ [ 'createdAt', 'DESC' ]]
+        });
+
+        return response
+    }
+
+    //find jam operasional terkahir digunakan jika tidak absen masuk
+    async function jamOperasionalsTerakhirCode(code) {
+        const response = await JamOperasional.findAll({
+            limit:1,
+            where:{
+                // tipeAbsenId:1,
+                code:code
             },
             order: [ [ 'createdAt', 'DESC' ]]
         });
@@ -1464,7 +1930,7 @@ export const getDataByFinger = async(req, res) => {
     }
 
     try {
-        const datas = await FingerprintSolution.download('20.30.3.4', []);
+        const datas = await FingerprintSolution.download('20.30.3.22', []);
         const dateNow = new Date();
         dateNow.setDate(dateNow.getDate() - 14);
         const min = date.format(dateNow, 'YYYY-MM-DD HH:mm:ss');
@@ -1478,6 +1944,18 @@ export const getDataByFinger = async(req, res) => {
         const absenPulang = datas.filter(
             data=>
             data.status == 1 &&
+            data.time > min
+            );
+        
+        const absenShiftMasuk = datas.filter(
+            data=>
+            data.status == 4 &&
+            data.time > min
+            );
+        
+        const absenShiftPulang = datas.filter(
+            data=>
+            data.status == 5 &&
             data.time > min
             );
         
@@ -1533,7 +2011,7 @@ export const getDataByFinger = async(req, res) => {
                                 tanggalSelesai:dateTimeFormat,
                                 pelanggaranId:2,
                                 statusInoutId:1,
-                                jamOperasionalId:jamOperasionalTerakhir.id,
+                                jamOperasionalId:jamOperasionalTerakhir[0].id,
                             })
                         }
 
@@ -1604,36 +2082,76 @@ export const getDataByFinger = async(req, res) => {
                         })
 
                         if(!inCheck){
-                            dataNotFound.push(data.time, data.status, 'tidak ada absen masuk');
-                        }
-                        else{
-                            const jamOperasional = await findJamOperasionalById(inCheck.jamOperasionalId);
+                            dataNotFound.push(data.time, data.status, 'tidak ada absen masuk 29');
 
-                            if(!jamOperasional){
+                            const jamOperasionalTerakhir = await jamOperasionalsTerakhir();
 
-                            }
-                            else{
-                                const uploadAbsenNormal = await uploadAbsen({
+                            const tidakAbsen = await findTipeAbsen(11);
+
+                            //cek pulang dulu atau tidak
+                            if(jamOperasionalTerakhir[0].jamPulang < timeFormat){
+                                const uploadAbsenTidakMasuk = await uploadAbsen({
+                                    userId:user.id,
+                                    tipeAbsenId:tidakAbsen.id,
+                                    tanggalMulai:dateFormat + ' 00:00:00',
+                                    tanggalSelesai:dateFormat + ' 00:00:00',
+                                    pelanggaranId:2,
+                                    statusInoutId:1,
+                                    jamOperasionalId:jamOperasionalTerakhir[0].id,
+                                })
+
+                                const uploadAbsenPulangNormal = await uploadAbsen({
                                     userId:user.id,
                                     tipeAbsenId:tipeAbsen.id,
                                     tanggalMulai:dateTimeFormat,
                                     tanggalSelesai:dateTimeFormat,
                                     pelanggaranId:1,
                                     statusInoutId:1,
-                                    jamOperasionalId:jamOperasional.id,
+                                    jamOperasionalId:jamOperasionalTerakhir[0].id,
+                                })
+    
+                                dataExist.push(uploadAbsenTidakMasuk, uploadAbsenPulangNormal, 'absen pulang tidak masuk 29');
+                            }
+                            else{
+                                const uploadAbsenTidakMasuk = await uploadAbsen({
+                                    userId:user.id,
+                                    tipeAbsenId:tidakAbsen.id,
+                                    tanggalMulai:dateFormat + ' 00:00:00',
+                                    tanggalSelesai:dateFormat + ' 00:00:00',
+                                    pelanggaranId:2,
+                                    statusInoutId:1,
+                                    jamOperasionalId:jamOperasionalTerakhir[0].id,
                                 })
 
-
-
-                                dataExist.push(uploadAbsenNormal, 'absen normal pulang');
-
+                                const uploadAbsenPulangNormal = await uploadAbsen({
+                                    userId:user.id,
+                                    tipeAbsenId:tipeAbsen.id,
+                                    tanggalMulai:dateTimeFormat,
+                                    tanggalSelesai:dateTimeFormat,
+                                    pelanggaranId:2,
+                                    statusInoutId:1,
+                                    jamOperasionalId:jamOperasionalTerakhir[0].id,
+                                })
+    
+                                dataExist.push(uploadAbsenTidakMasuk, uploadAbsenPulangNormal, 'absen pulang tidak masuk 29');
                             }
-
+                        }
+                        else{
+                            dataDelete.push(inCheck, 'in check');
+                            
+                            const uploadAbsenNormal = await uploadAbsen({
+                                userId:user.id,
+                                tipeAbsenId:tipeAbsen.id,
+                                tanggalMulai:dateTimeFormat,
+                                tanggalSelesai:dateTimeFormat,
+                                pelanggaranId:1,
+                                statusInoutId:2,
+                                jamOperasionalId:inCheck.jamOperasionalId,
+                            })
                         }
                     }
                     //jika sudah ada absen
                     else{
-
                         const findDataOutDouble = await InOut.findAll({
                             where:{
                                 tanggalMulai:{
@@ -1662,6 +2180,270 @@ export const getDataByFinger = async(req, res) => {
 
         }))
 
+        //submit absen shift masuk
+        const codeShiftMasuk = [4];
+
+        await Promise.all(absenShiftMasuk.map(async (data)=>{
+            const timeFind = new Date(data.time);
+            const timeFormat = date.format(timeFind, 'HH:mm:ss');
+            const dateFormat = date.format(timeFind, 'YYYY-MM-DD');
+            const dateTimeFormat = date.format(timeFind, 'YYYY-MM-DD HH:mm:ss');
+
+            //cari data user
+            const user = await findUser(data.pin);
+            
+            if(!user){
+                console.log('user not found 1')
+            }
+            else{
+
+                //cari tipe absen
+                const tipeAbsen = await findTipeAbsen(data.status);
+
+                if(!tipeAbsen){
+                    console.log('tipe not found 1')
+                }
+                else{
+                    //cari data absen jika sudah absen
+                    const inOut = await findInOut({
+                        userId:user.id,
+                        tipeAbsenId:tipeAbsen.id,
+                        tanggalMulai:data.time,
+                        dateFormat:dateFormat,
+                        code:codeShiftMasuk
+                    });
+
+                    //jika belum absen
+                    if(!inOut){
+                        const jamOperasional = await findJamOperasionals({
+                            timeFormat:timeFormat, 
+                            code:2
+                        });
+
+                        //jika telat
+                        if(!jamOperasional){
+                            const jamOperasionalTerakhir = await jamOperasionalsTerakhirCode(2);
+
+                            const uploadAbsenNormal = await uploadAbsen({
+                                userId:user.id,
+                                tipeAbsenId:tipeAbsen.id,
+                                tanggalMulai:dateTimeFormat,
+                                tanggalSelesai:dateTimeFormat,
+                                pelanggaranId:2,
+                                statusInoutId:1,
+                                jamOperasionalId:jamOperasionalTerakhir[0].id,
+                            })
+                        }
+
+                        //jika absen normal
+                        else{
+                            const uploadAbsenNormal = await uploadAbsen({
+                                userId:user.id,
+                                tipeAbsenId:tipeAbsen.id,
+                                tanggalMulai:dateTimeFormat,
+                                tanggalSelesai:dateTimeFormat,
+                                pelanggaranId:1,
+                                statusInoutId:1,
+                                jamOperasionalId:jamOperasional.id,
+                            })
+
+                            dataNotFound.push(dateTimeFormat, 'belum absen absen');
+                        }
+                    }
+
+                    // jika sudah absen
+                    else{
+                        // dataExist.push(inOut, 'sudah absen tipe absen id database');
+                    }
+                }
+            }
+        }));
+
+        //submit absen shift pulang
+        const codeShiftPulang = [5];
+
+        await Promise.all(absenShiftPulang.map(async (data)=>{
+            const timeFind = new Date(data.time);
+            const timeFormat = date.format(timeFind, 'HH:mm:ss');
+            const dateFormat = date.format(timeFind, 'YYYY-MM-DD');
+            const dateTimeFormat = date.format(timeFind, 'YYYY-MM-DD HH:mm:ss');
+
+            //cari data user
+            const user = await findUser(data.pin);
+
+            if(!user){
+                console.log('user not found 1')
+            }
+            else{
+                //cari tipe absen
+                const tipeAbsen = await findTipeAbsen(data.status);
+
+                if(!tipeAbsen){
+                    console.log('tipe not found 1')
+                }
+                else{
+                    //cari data absen jika sudah absen
+                    const inOut = await findInOut({
+                        userId:user.id,
+                        tipeAbsenId:tipeAbsen.id,
+                        tanggalMulai:data.time,
+                        dateFormat:dateFormat,
+                        code:codeShiftPulang
+                    });
+
+                    //jika belum absen
+                    if(!inOut){
+                        const inCheck = await findIn({
+                            userId:user.id,
+                            tipeAbsenId:tipeAbsen.id,
+                            tanggalMulai:data.time,
+                            dateFormat:dateFormat,
+                            code:codeMasuk
+                        })
+
+                        if(!inCheck){
+                            dataNotFound.push(data.time, data.status, 'tidak ada absen masuk 29');
+
+                            const jamOperasionalTerakhir = await jamOperasionalsTerakhirCode(2);
+
+                            const tidakAbsen = await findTipeAbsen(11);
+
+                            //cek pulang dulu atau tidak
+                            if(jamOperasionalTerakhir[0].jamPulang < timeFormat){
+                                
+                                const uploadAbsenPulangNormal = await uploadAbsen({
+                                    userId:user.id,
+                                    tipeAbsenId:tipeAbsen.id,
+                                    tanggalMulai:dateTimeFormat,
+                                    tanggalSelesai:dateTimeFormat,
+                                    pelanggaranId:1,
+                                    statusInoutId:1,
+                                    jamOperasionalId:jamOperasionalTerakhir[0].id,
+                                })
+    
+                                dataExist.push(uploadAbsenPulangNormal, 'absen pulang tidak masuk 29');
+                            }
+                            else{
+                                const uploadAbsenPulangNormal = await uploadAbsen({
+                                    userId:user.id,
+                                    tipeAbsenId:tipeAbsen.id,
+                                    tanggalMulai:dateTimeFormat,
+                                    tanggalSelesai:dateTimeFormat,
+                                    pelanggaranId:2,
+                                    statusInoutId:1,
+                                    jamOperasionalId:jamOperasionalTerakhir[0].id,
+                                })
+    
+                                dataExist.push(uploadAbsenPulangNormal, 'absen pulang tidak masuk 29');
+                            }
+                        }
+                        else{
+                            dataDelete.push(inCheck, 'in check');
+                            
+                            const uploadAbsenNormal = await uploadAbsen({
+                                userId:user.id,
+                                tipeAbsenId:tipeAbsen.id,
+                                tanggalMulai:dateTimeFormat,
+                                tanggalSelesai:dateTimeFormat,
+                                pelanggaranId:1,
+                                statusInoutId:2,
+                                jamOperasionalId:inCheck.jamOperasionalId,
+                            })
+                        }
+                    }
+                    //jika sudah ada absen
+                    else{
+                        const findDataOutDouble = await InOut.findAll({
+                            where:{
+                                tanggalMulai:{
+                                    [Op.and]: {
+                                        [Op.gte]: dateFormat + ' 00:00:00',
+                                        [Op.lte]: dateFormat + ' 23:59:59',
+                                    }
+                                }
+                            },
+                            include:{
+                                model:TipeAbsen,
+                                where:{
+                                    code: { [Op.in]: codePulang}
+                                }
+                            }
+                        });
+
+                        if(findDataOutDouble.length > 1){
+                            dataDouble.push(findDataOutDouble, 'pulang');
+                            dataDelete.push(findDataOutDouble[0], 'delete')
+                            await findDataOutDouble[0].destroy();
+                        }
+                    }
+                }
+            }
+
+        }));
+
+        //filter absen masuk
+        await Promise.all(absenMasuk.map(async (data)=>{
+            const timeFind = new Date(data.time);
+            const dateFormat = date.format(timeFind, 'YYYY-MM-DD');
+            
+            //cari data user
+            const user = await findUser(data.pin);
+
+            if(!user){
+                console.log('user not found 1')
+            }
+            else{
+                //cari tipe absen
+                const tipeAbsen = await findTipeAbsen(data.status);
+
+                if(!tipeAbsen){
+                    console.log('tipe not found 1')
+                }
+                else{
+                    //cari data absen jika sudah absen
+                    const inOut = await findInOut({
+                        userId:user.id,
+                        tipeAbsenId:tipeAbsen.id,
+                        tanggalMulai:data.time,
+                        dateFormat:dateFormat,
+                        code:codePulang
+                    });
+
+                    //jika ada data
+                    if(inOut !== null){
+                        //cari data double untuk didelete
+                        const findDataOutDouble = await InOut.findAll({
+                            where:{
+                                tanggalMulai:{
+                                    [Op.and]: {
+                                        [Op.gte]: dateFormat + ' 00:00:00',
+                                        [Op.lte]: dateFormat + ' 23:59:59',
+                                    }
+                                }
+                            },
+                            include:{
+                                model:TipeAbsen,
+                                where:{
+                                    code: { [Op.in]: codePulang}
+                                }
+                            }
+                        });
+
+                        //jika ada data double
+                        if(findDataOutDouble.length > 1){
+                            dataDouble.push(findDataOutDouble, 'pulang');
+                            dataDelete.push(findDataOutDouble[0], 'delete')
+                            
+                            //delete data
+                            await findDataOutDouble[0].destroy();
+                        }
+                    }
+                }
+            }
+
+        }))
+
+        //filter absen pulang
         await Promise.all(absenPulang.map(async (data)=>{
             const timeFind = new Date(data.time);
             const dateFormat = date.format(timeFind, 'YYYY-MM-DD');
@@ -1689,7 +2471,7 @@ export const getDataByFinger = async(req, res) => {
                         code:codePulang
                     });
 
-                    //jika belum absen
+                    //jika ada data
                     if(inOut !== null){
                         //cari data double untuk didelete
                         const findDataOutDouble = await InOut.findAll({
@@ -1705,6 +2487,130 @@ export const getDataByFinger = async(req, res) => {
                                 model:TipeAbsen,
                                 where:{
                                     code: { [Op.in]: codePulang}
+                                }
+                            }
+                        });
+
+                        //jika ada data double
+                        if(findDataOutDouble.length > 1){
+                            dataDouble.push(findDataOutDouble, 'pulang');
+                            dataDelete.push(findDataOutDouble[0], 'delete')
+                            
+                            //delete data
+                            await findDataOutDouble[0].destroy();
+                        }
+                    }
+                }
+            }
+
+        }))
+
+        //filter absen shift masuk
+        await Promise.all(absenShiftMasuk.map(async (data)=>{
+            const timeFind = new Date(data.time);
+            const dateFormat = date.format(timeFind, 'YYYY-MM-DD');
+            
+            //cari data user
+            const user = await findUser(data.pin);
+
+            if(!user){
+                console.log('user not found 1')
+            }
+            else{
+                //cari tipe absen
+                const tipeAbsen = await findTipeAbsen(data.status);
+
+                if(!tipeAbsen){
+                    console.log('tipe not found 1')
+                }
+                else{
+                    //cari data absen jika sudah absen
+                    const inOut = await findInOut({
+                        userId:user.id,
+                        tipeAbsenId:tipeAbsen.id,
+                        tanggalMulai:data.time,
+                        dateFormat:dateFormat,
+                        code:codeShiftMasuk
+                    });
+
+                    //jika ada data
+                    if(inOut !== null){
+                        //cari data double untuk didelete
+                        const findDataOutDouble = await InOut.findAll({
+                            where:{
+                                tanggalMulai:{
+                                    [Op.and]: {
+                                        [Op.gte]: dateFormat + ' 00:00:00',
+                                        [Op.lte]: dateFormat + ' 23:59:59',
+                                    }
+                                }
+                            },
+                            include:{
+                                model:TipeAbsen,
+                                where:{
+                                    code: { [Op.in]: codeShiftMasuk}
+                                }
+                            }
+                        });
+
+                        //jika ada data double
+                        if(findDataOutDouble.length > 1){
+                            dataDouble.push(findDataOutDouble, 'pulang');
+                            dataDelete.push(findDataOutDouble[0], 'delete')
+                            
+                            //delete data
+                            await findDataOutDouble[0].destroy();
+                        }
+                    }
+                }
+            }
+
+        }))
+
+        //filter absen shift pulang
+        await Promise.all(absenShiftPulang.map(async (data)=>{
+            const timeFind = new Date(data.time);
+            const dateFormat = date.format(timeFind, 'YYYY-MM-DD');
+            
+            //cari data user
+            const user = await findUser(data.pin);
+
+            if(!user){
+                console.log('user not found 1')
+            }
+            else{
+                //cari tipe absen
+                const tipeAbsen = await findTipeAbsen(data.status);
+
+                if(!tipeAbsen){
+                    console.log('tipe not found 1')
+                }
+                else{
+                    //cari data absen jika sudah absen
+                    const inOut = await findInOut({
+                        userId:user.id,
+                        tipeAbsenId:tipeAbsen.id,
+                        tanggalMulai:data.time,
+                        dateFormat:dateFormat,
+                        code:codeShiftPulang
+                    });
+
+                    //jika ada data
+                    if(inOut !== null){
+                        //cari data double untuk didelete
+                        const findDataOutDouble = await InOut.findAll({
+                            where:{
+                                tanggalMulai:{
+                                    [Op.and]: {
+                                        [Op.gte]: dateFormat + ' 00:00:00',
+                                        [Op.lte]: dateFormat + ' 23:59:59',
+                                    }
+                                }
+                            },
+                            include:{
+                                model:TipeAbsen,
+                                where:{
+                                    code: { [Op.in]: codeShiftPulang}
                                 }
                             }
                         });
