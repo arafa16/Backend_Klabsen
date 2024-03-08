@@ -36,6 +36,8 @@ import AtasanRoute from './routes/AtasanRoute.js';
 import StatusKoreksi from './routes/StatusKoreksiRoute.js'
 import InOut from './routes/InOutRoute.js'
 import Privilege from './routes/PrivilegeRoute.js';
+import Event from './routes/EventRoute.js';
+import TipeEvent from './routes/TipeEventRoute.js';
 import cron from 'node-cron';
 
 const app = express();
@@ -98,6 +100,8 @@ app.use(GroupRoute);
 app.use(AtasanRoute);
 app.use(InOut);
 app.use(Privilege);
+app.use(Event);
+app.use(TipeEvent);
 
 //setup public folder
 app.use(express.static("public"));
@@ -106,24 +110,24 @@ store.sync();
 
 
 // jadwal penarikan data absen
-cron.schedule('*/1 * * * *', function() {
-    testInOut('20.30.3.22').then(
-    // testInOut('202.152.5.198:8070').then(
-        // ()=>{
-        //     console.log('penarikan rukan mulai');
-        //     testInOut('103.160.12.10').sthen(()=>{
-        //             console.log('penarikan tebet mulai')
-        //             testInOut('103.171.31.60').then(()=>{
-        //                     console.log('penarikan cipinang');
-        //                     testInOut('183.91.71.228:9001').then(()=>{
-        //                         console.log('penarikan bandung');
-        //                         testInOut('183.91.71.228:9080')
-        //                     });
-        //                 });
-        //         });
-        // }
-        );
-});
+// cron.schedule('*/1 * * * *', function() {
+//     testInOut('20.30.3.22').then(
+//     // testInOut('202.152.5.198:8070').then(
+//         // ()=>{
+//         //     console.log('penarikan rukan mulai');
+//         //     testInOut('103.160.12.10').sthen(()=>{
+//         //             console.log('penarikan tebet mulai')
+//         //             testInOut('103.171.31.60').then(()=>{
+//         //                     console.log('penarikan cipinang');
+//         //                     testInOut('183.91.71.228:9001').then(()=>{
+//         //                         console.log('penarikan bandung');
+//         //                         testInOut('183.91.71.228:9080')
+//         //                     });
+//         //                 });
+//         //         });
+//         // }
+//         );
+// });
 
 app.listen(process.env.PORT,()=>{
     console.log(`server running at port ${process.env.PORT}`)

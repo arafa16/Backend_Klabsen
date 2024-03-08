@@ -1828,12 +1828,16 @@ export const getDataByFinger = async(req, res) => {
                     }
                 }
             },
-            include:{
-                model:TipeAbsen,
-                where:{
-                    code: { [Op.in]: data.code }
+            include:[{
+                    model:TipeAbsen,
+                    where:{
+                        code: { [Op.in]: data.code }
+                    }
+                },
+                {
+                    model:JamOperasional
                 }
-            }
+            ]
         })
 
         return response
@@ -2145,7 +2149,7 @@ export const getDataByFinger = async(req, res) => {
                                 tanggalMulai:dateTimeFormat,
                                 tanggalSelesai:dateTimeFormat,
                                 pelanggaranId:1,
-                                statusInoutId:2,
+                                statusInoutId:1,
                                 jamOperasionalId:inCheck.jamOperasionalId,
                             })
                         }
@@ -2224,7 +2228,7 @@ export const getDataByFinger = async(req, res) => {
                         if(!jamOperasional){
                             const jamOperasionalTerakhir = await jamOperasionalsTerakhirCode(2);
 
-                            const uploadAbsenNormal = await uploadAbsen({
+                            const uploadAbsenTelat = await uploadAbsen({
                                 userId:user.id,
                                 tipeAbsenId:tipeAbsen.id,
                                 tanggalMulai:dateTimeFormat,
@@ -2233,21 +2237,38 @@ export const getDataByFinger = async(req, res) => {
                                 statusInoutId:1,
                                 jamOperasionalId:jamOperasionalTerakhir[0].id,
                             })
+                            
                         }
 
                         //jika absen normal
                         else{
-                            const uploadAbsenNormal = await uploadAbsen({
-                                userId:user.id,
-                                tipeAbsenId:tipeAbsen.id,
-                                tanggalMulai:dateTimeFormat,
-                                tanggalSelesai:dateTimeFormat,
-                                pelanggaranId:1,
-                                statusInoutId:1,
-                                jamOperasionalId:jamOperasional.id,
-                            })
+                            
+                            if(jamOperasional.jamMasuk < timeFormat){
 
-                            dataNotFound.push(dateTimeFormat, 'belum absen absen');
+                                const uploadAbsenNormal = await uploadAbsen({
+                                    userId:user.id,
+                                    tipeAbsenId:tipeAbsen.id,
+                                    tanggalMulai:dateTimeFormat,
+                                    tanggalSelesai:dateTimeFormat,
+                                    pelanggaranId:2,
+                                    statusInoutId:1,
+                                    jamOperasionalId:jamOperasional.id,
+                                })
+    
+                                dataNotFound.push(jamOperasional, 'jam operasional');
+                            }
+                            else{
+                                const uploadAbsenNormal = await uploadAbsen({
+                                    userId:user.id,
+                                    tipeAbsenId:tipeAbsen.id,
+                                    tanggalMulai:dateTimeFormat,
+                                    tanggalSelesai:dateTimeFormat,
+                                    pelanggaranId:1,
+                                    statusInoutId:1,
+                                    jamOperasionalId:jamOperasional.id,
+                                })
+                            }
+                            
                         }
                     }
 
@@ -2301,6 +2322,8 @@ export const getDataByFinger = async(req, res) => {
                             code:codeMasuk
                         })
 
+                        
+
                         if(!inCheck){
                             dataNotFound.push(data.time, data.status, 'tidak ada absen masuk 29');
 
@@ -2309,7 +2332,7 @@ export const getDataByFinger = async(req, res) => {
                             const tidakAbsen = await findTipeAbsen(11);
 
                             //cek pulang dulu atau tidak
-                            if(jamOperasionalTerakhir[0].jamPulang < timeFormat){
+                            if(jamOperasionalTerakhir[0].jamPulang > timeFormat){
                                 
                                 const uploadAbsenPulangNormal = await uploadAbsen({
                                     userId:user.id,
@@ -2338,7 +2361,7 @@ export const getDataByFinger = async(req, res) => {
                             }
                         }
                         else{
-                            dataDelete.push(inCheck, 'in check');
+                            
                             
                             const uploadAbsenNormal = await uploadAbsen({
                                 userId:user.id,
