@@ -35,6 +35,9 @@ export const getPendapatanTable = async(req, res) => {
                 {
                     model:Users,
                     attributes:['uuid','name','nik']
+                },
+                {
+                    model:TipePendapatan
                 }
             ]
         });
@@ -80,6 +83,9 @@ export const getPendapatanTableSearch = async(req, res) => {
                             }
                         ]
                     },
+                },
+                {
+                    model:TipePendapatan
                 }
             ]
         });
@@ -120,6 +126,9 @@ export const getPendapatanTableSearchById = async(req, res) => {
                     where:{
                             uuid:id
                         }
+                },
+                {
+                    model:TipePendapatan
                 }
             ],
             where:[
@@ -173,6 +182,9 @@ export const getPendapatanTableById = async(req, res) => {
                     where:{
                         uuid:id
                     }
+                },
+                {
+                    model:TipePendapatan
                 }
             ],
             where:{
@@ -198,6 +210,21 @@ export const getPendapatanByUser = async(req, res) => {
         const response = await Pendapatan.findAndCountAll({
             limit:limit,
             offset:offset,
+            include:[
+                {
+                    model:Users,
+                    attributes:['uuid','name','nik'],
+                    include:[
+                        {
+                            model:Group,
+                            attributes:['uuid','name']
+                        }
+                    ]
+                },
+                {
+                    model:TipePendapatan
+                }
+            ],
             where:{
                 userId:req.params.id
             }
@@ -216,10 +243,15 @@ export const getPendapatanById = async(req, res) => {
                 {
                     model:Users,
                     attributes:['uuid','name','nik'],
-                    include:{
-                        model:Group,
-                        attributes:['uuid','name']
-                    }
+                    include:[
+                        {
+                            model:Group,
+                            attributes:['uuid','name']
+                        }
+                    ]
+                },
+                {
+                    model:TipePendapatan
                 }
             ],
             where:{
