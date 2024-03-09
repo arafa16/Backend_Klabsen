@@ -1292,15 +1292,28 @@ export const testInOut = async(ip) => {
                         else{
                             dataDelete.push(inCheck, 'in check');
                             
-                            const uploadAbsenNormal = await uploadAbsen({
-                                userId:user.id,
-                                tipeAbsenId:tipeAbsen.id,
-                                tanggalMulai:dateTimeFormat,
-                                tanggalSelesai:dateTimeFormat,
-                                pelanggaranId:1,
-                                statusInoutId:2,
-                                jamOperasionalId:inCheck.jamOperasionalId,
-                            })
+                            if(inCheck.jam_operasional.jamPulang < timeFormat){
+                                const uploadAbsenNormal = await uploadAbsen({
+                                    userId:user.id,
+                                    tipeAbsenId:tipeAbsen.id,
+                                    tanggalMulai:dateTimeFormat,
+                                    tanggalSelesai:dateTimeFormat,
+                                    pelanggaranId:1,
+                                    statusInoutId:1,
+                                    jamOperasionalId:inCheck.jamOperasionalId,
+                                });
+                            }
+                            else{
+                                const uploadAbsenNormal = await uploadAbsen({
+                                    userId:user.id,
+                                    tipeAbsenId:tipeAbsen.id,
+                                    tanggalMulai:dateTimeFormat,
+                                    tanggalSelesai:dateTimeFormat,
+                                    pelanggaranId:2,
+                                    statusInoutId:1,
+                                    jamOperasionalId:inCheck.jamOperasionalId,
+                                })
+                            }
                         }
                     }
                     //jika sudah ada absen
@@ -1934,7 +1947,7 @@ export const getDataByFinger = async(req, res) => {
     }
 
     try {
-        const datas = await FingerprintSolution.download('20.30.3.22', []);
+        const datas = await FingerprintSolution.download('103.160.12.10', []);
         const dateNow = new Date();
         dateNow.setDate(dateNow.getDate() - 14);
         const min = date.format(dateNow, 'YYYY-MM-DD HH:mm:ss');
@@ -2143,15 +2156,29 @@ export const getDataByFinger = async(req, res) => {
                         else{
                             dataDelete.push(inCheck, 'in check');
                             
-                            const uploadAbsenNormal = await uploadAbsen({
-                                userId:user.id,
-                                tipeAbsenId:tipeAbsen.id,
-                                tanggalMulai:dateTimeFormat,
-                                tanggalSelesai:dateTimeFormat,
-                                pelanggaranId:1,
-                                statusInoutId:1,
-                                jamOperasionalId:inCheck.jamOperasionalId,
-                            })
+                            if(inCheck.jam_operasional.jamPulang < timeFormat){
+                                const uploadAbsenNormal = await uploadAbsen({
+                                    userId:user.id,
+                                    tipeAbsenId:tipeAbsen.id,
+                                    tanggalMulai:dateTimeFormat,
+                                    tanggalSelesai:dateTimeFormat,
+                                    pelanggaranId:1,
+                                    statusInoutId:1,
+                                    jamOperasionalId:inCheck.jamOperasionalId,
+                                });
+                            }
+                            else{
+                                const uploadAbsenNormal = await uploadAbsen({
+                                    userId:user.id,
+                                    tipeAbsenId:tipeAbsen.id,
+                                    tanggalMulai:dateTimeFormat,
+                                    tanggalSelesai:dateTimeFormat,
+                                    pelanggaranId:2,
+                                    statusInoutId:1,
+                                    jamOperasionalId:inCheck.jamOperasionalId,
+                                })
+                            }
+                            
                         }
                     }
                     //jika sudah ada absen
