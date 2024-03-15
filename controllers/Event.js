@@ -1,6 +1,6 @@
 import Event from "../models/EventModal.js";
 import TipeEvent from "../models/TipeEventModal.js";
-
+import { Op } from "sequelize";
 export const getEvents = async(req, res) => {
     try {
         const response = await Event.findAll({
@@ -20,6 +20,37 @@ export const getEventsById = async(req, res) => {
         const response = await Event.findOne({
             where:{
                 uuid:req.params.id
+            },
+            include:[
+                    {model:TipeEvent}
+                ]
+        });
+
+        return res.status(200).json(response);
+    } catch (error) {
+        return res.status(500).json({msg: error})
+    }
+}
+
+export const getEventsByMonth = async(req, res) => {
+    const {bulan, tahun} = req.params;
+    const limit = parseInt(req.params.limit);
+    const page = parseInt(req.params.page);
+
+    const offset = (page - 1) * limit;
+
+    try {
+        const response = await Event.findAndCountAll({
+            limit:limit,
+            offset:offset,
+            order: [
+                ['code', 'ASC']
+            ],
+            where:{
+                [Op.and]: [
+                    { bulan: bulan },
+                    { tahun: tahun }
+                  ]
             },
             include:[
                     {model:TipeEvent}
@@ -57,7 +88,7 @@ export const getEventsTable = async(req, res) => {
 }
 
 export const createEvents = async(req, res) => {
-    const {name, tanggalMulai, tanggalSelesai, tipeEventId, code, isActive } = req.body;
+    const {name, bulan, tahun, tanggalMulai, tanggalSelesai, tipeEventId, code, isActive } = req.body;
 
     const findTipeEvent = await TipeEvent.findOne({
         where:{
@@ -70,6 +101,8 @@ export const createEvents = async(req, res) => {
     try {
         const response = await Event.create({
             name:name,
+            bulan:bulan,
+            tahun:tahun,
             tanggalMulai:tanggalMulai,
             tanggalSelesai:tanggalSelesai,
             tipeEventId:findTipeEvent.id,
@@ -84,7 +117,7 @@ export const createEvents = async(req, res) => {
 }
 
 export const updateEvents = async(req, res) => {
-    const {name, tanggalMulai, tanggalSelesai, tipeEventId, code, isActive } = req.body;
+    const {name, bulan, tahun, tanggalMulai, tanggalSelesai, tipeEventId, code, isActive } = req.body;
 
     const findTipeEvent = await TipeEvent.findOne({
         where:{
@@ -105,6 +138,8 @@ export const updateEvents = async(req, res) => {
     try {
         await findEvent.update({
             name:name,
+            bulan:bulan,
+            tahun:tahun,
             tanggalMulai:tanggalMulai,
             tanggalSelesai:tanggalSelesai,
             tipeEventId:findTipeEvent.id,

@@ -21,7 +21,35 @@ export const getPeriodeTable = async(req, res) => {
     try {
         const response = await PeriodeKerja.findAndCountAll({
             limit:limit,
-            offset:offset
+            offset:offset,
+            order: [
+                ['code', 'DESC']
+            ]
+        });
+
+        return res.status(200).json(response);
+    } catch (error) {
+        return res.status(500).json({msg: error.message})
+    }
+}
+
+export const getPeriodeTableStatus = async(req, res) => {
+    const limit = parseInt(req.params.limit);
+    const page = parseInt(req.params.page);
+    const isActive = req.params.isActive;
+
+    const offset = (page - 1) * limit;
+
+    try {
+        const response = await PeriodeKerja.findAndCountAll({
+            limit:limit,
+            offset:offset,
+            order: [
+                ['code', 'DESC']
+            ],
+            where:{
+                isActive:isActive
+            }
         });
 
         return res.status(200).json(response);

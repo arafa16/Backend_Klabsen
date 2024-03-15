@@ -20,6 +20,20 @@ const Event = db.define('event', {
             notEmpty: true
         }
     },
+    bulan:{
+        type: DataTypes.DECIMAL,
+        allowNull:false,
+        validate:{
+            notEmpty: true
+        }
+    },
+    tahun:{
+        type: DataTypes.DECIMAL,
+        allowNull:false,
+        validate:{
+            notEmpty: true
+        }
+    },
     tanggalMulai:{
         type: DataTypes.DATE,
         allowNull:false,

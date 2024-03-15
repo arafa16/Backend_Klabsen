@@ -4,6 +4,7 @@ import {
     createInOutByAbsenWeb, 
     deleteInOut, 
     getDataByFinger, 
+    getDataByIdAndMonth, 
     getDataFinger, 
     getInOut, 
     getInOutById, 
@@ -24,5 +25,9 @@ route.delete('/inOuts/:id', deleteInOut);
 
 route.get('/inOutMesin', getDataFinger);
 route.get('/inOutMesinByFinger', getDataByFinger);
+
+//perhitungan
+route.get('/inOuts/idAndMonth/:id&:tanggalMulai&:tanggalSelesai', getDataByIdAndMonth);
+
 
 export default route;

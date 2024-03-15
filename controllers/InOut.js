@@ -2684,3 +2684,41 @@ export const getDataByFinger = async(req, res) => {
         return res.status(500).json({msg: error.msg});
     }
 }
+
+
+//perhitungan by month
+export const getDataByIdAndMonth = async(req, res)=>{
+    const {id, tanggalMulai, tanggalSelesai} = req.params;
+    // const date = new Date();
+
+    const startDate = date.format(new Date(tanggalMulai), 'YYYY-MM-DD HH:mm:ss');
+    const endDate = date.format(new Date(tanggalSelesai), 'YYYY-MM-DD HH:mm:ss');
+
+    try {
+        const findUser = await Users.findOne({
+            where:{
+                uuid:id
+            }
+        });
+
+        if(!findUser) return res.statu(404).json({msg: 'user not found'});
+        
+        // console.log(startDate, endDate, 'tampilkan');
+
+        const findInOut = await InOut.findAll({
+            where:{
+                userId:findUser.id,
+                tanggalMulai:{
+                    [Op.and]: {
+                        [Op.gte]: startDate,
+                        [Op.lte]: endDate,
+                        }
+                }
+            }
+        })
+
+        res.status(200).json(findInOut);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+}
