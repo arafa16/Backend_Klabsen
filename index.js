@@ -38,6 +38,7 @@ import InOut from './routes/InOutRoute.js'
 import Privilege from './routes/PrivilegeRoute.js';
 import Event from './routes/EventRoute.js';
 import TipeEvent from './routes/TipeEventRoute.js';
+import Perhitungan from './routes/PerhitunganRoute.js';
 import cron from 'node-cron';
 
 const app = express();
@@ -102,6 +103,7 @@ app.use(InOut);
 app.use(Privilege);
 app.use(Event);
 app.use(TipeEvent);
+app.use(Perhitungan);
 
 //setup public folder
 app.use(express.static("public"));
