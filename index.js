@@ -39,6 +39,7 @@ import Privilege from './routes/PrivilegeRoute.js';
 import Event from './routes/EventRoute.js';
 import TipeEvent from './routes/TipeEventRoute.js';
 import Perhitungan from './routes/PerhitunganRoute.js';
+import ResetPassword from './routes/ResetPasswordRoute.js';
 import cron from 'node-cron';
 
 const app = express();
@@ -104,6 +105,7 @@ app.use(Privilege);
 app.use(Event);
 app.use(TipeEvent);
 app.use(Perhitungan);
+app.use(ResetPassword);
 
 //setup public folder
 app.use(express.static("public"));
