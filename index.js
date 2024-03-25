@@ -58,11 +58,11 @@ const store = new sessionStore({
 app.use(session({
     secret: process.env.SESS_SECRET,
     resave: false,
-    // proxy: false,
+    proxy: false,
     saveUninitialized: true,
     store:store,
     cookie: {
-        // httpOnly: true,
+        httpOnly: true,
         secure: 'auto',
         maxAge: 1000 * 60 * 60
     }
