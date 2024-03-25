@@ -58,12 +58,12 @@ const store = new sessionStore({
 app.use(session({
     secret: process.env.SESS_SECRET,
     resave: false,
-    proxy: true,
+    // proxy: true,
     saveUninitialized: true,
     store:store,
     cookie: {
         httpOnly: true,
-        secure: 'auto',
+        // secure: 'auto',
         maxAge: 1000 * 60 * 60
     }
 }));
@@ -110,8 +110,25 @@ app.use(ResetPassword);
 //setup public folder
 app.use(express.static("public"));
 
-store.sync();
+app.use(function (req, res, next) {
 
+    // Website you wish to allow to connect
+    res.setHeader('Access-Control-Allow-Origin', `${process.env.URL_ORIGIN}`);
+
+    // Request methods you wish to allow
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+    // Request headers you wish to allow
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+
+    // to the API (e.g. in case you use sessions)
+    res.setHeader('Access-Control-Allow-Credentials', true);
+
+    // Pass to next layer of middleware
+    next();
+});
+
+// store.sync();
 
 // jadwal penarikan data absen
 // cron.schedule('*/1 * * * *', function() {
