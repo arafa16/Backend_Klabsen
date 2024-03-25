@@ -2714,7 +2714,15 @@ export const getDataByIdAndMonth = async(req, res)=>{
                         [Op.lte]: endDate,
                         }
                 }
-            }
+            },
+            include:[
+                {
+                    model:TipeAbsen
+                },
+                {
+                    model:Pelanggaran
+                }
+            ]
         })
 
         res.status(200).json(findInOut);

@@ -13,8 +13,9 @@ import StatusPerkawinan from "../models/StatusPerkawinanModal.js";
 
 import argon from 'argon2';
 import Privilege from "../models/PrivilegeModal.js";
-// import path from 'path';
-// import fs from 'fs';
+import path from 'path';
+import fs from 'fs';
+import xlsx from 'xlsx';
 
 export const getUsers = async(req, res) => {
     try {
@@ -486,7 +487,6 @@ export const changePassword = async(req, res) => {
     }
 }
 
-
 export const deleteUser = async(req, res) => {
     const response = await Users.findOne({
         where:{
@@ -504,4 +504,164 @@ export const deleteUser = async(req, res) => {
     } catch (error) {
         return res.status(500).json({msg: error.message});
     }
+}
+
+export const importUsers = async(req, res) => {
+    if(req.files === null) return res.status(401).json({msg: "No file Upload"});
+    
+    const {file} = req.files;
+    const ext = path.extname(file.name);
+    const fileName = file.md5+ext;
+    const filePath = `./public/importFile/${fileName}`;
+
+    file.mv(filePath, async(err)=>{
+        if(err) return res.status(500).json({msg: err.message});
+        
+        let workbook = xlsx.readFile(`./public/importFile/${fileName}`);
+        let sheetNames = workbook.SheetNames[0];
+        let data = xlsx.utils.sheet_to_json(workbook.Sheets[sheetNames]);
+
+        console.log(data);
+        
+        try {
+            for(let i = 0; i < data.length; i++){
+
+                const findGander = await Gander.findOne({
+                    where:{
+                        name:data[i].gander
+                    },
+                    attributes:['id','name']
+                });
+
+                const findPenempatan = await Penempatan.findOne({
+                    where:{
+                        name:data[i].penempatan
+                    },
+                    attributes:['id','name']
+                });
+
+                const findJabatan = await Jabatan.findOne({
+                    where:{
+                        name:data[i].jabatan
+                    },
+                    attributes:['id','name']
+                });
+
+                const findAtasan = await Users.findOne({
+                    where:{
+                        name:data[i].atasan
+                    },
+                    attributes:['id','name']
+                })
+
+                const findStatusPerkawinan = await StatusPerkawinan.findOne({
+                    where:{
+                        name:data[i].statusPerkawinan
+                    },
+                    attributes:['id','name']
+                })
+
+                const findPendidikan = await Pendidikan.findOne({
+                    where:{
+                        name:data[i].pendidikan
+                    },
+                    attributes:['id','name']
+                })
+
+                const findContactEmergency = await ContactEmergency.findOne({
+                    where:{
+                        name:data[i].contactEmergency
+                    },
+                    attributes:['id','name']
+                })
+
+                const findGolonganDarah = await GolonganDarah.findOne({
+                    where:{
+                        name:data[i].golonganDarah
+                    },
+                    attributes:['id','name']
+                })
+
+                const findBank = await Bank.findOne({
+                    where:{
+                        name:data[i].bank
+                    },
+                    attributes:['id','name']
+                })
+
+                const findJamOperasional = await JamOperasional.findOne({
+                    where:{
+                        name:data[i].jamOperasional
+                    },
+                    attributes:['id','name']
+                })
+
+                const findGroup = await Group.findOne({
+                    where:{
+                        name:data[i].group
+                    },
+                    attributes:['id','name']
+                })
+
+                const findStatus = await Status.findOne({
+                    where:{
+                        name:data[i].status
+                    },
+                    attributes:['id','name']
+                })
+
+                const hasPassword = await argon.hash(data[i].password);
+
+                const createUser = await Users.create({
+                    nik:data[i].nik,
+                    absenId:data[i].absenId,
+                    name:data[i].name, 
+                    ganderId:findGander && findGander.id, 
+                    email:data[i].email,
+                    password:hasPassword,
+                    extention:data[i].extention,
+                    nomorHp:data[i].nomorHp,
+                    penempatanId:findPenempatan && findPenempatan.id,
+                    jabatanId:findJabatan && findJabatan.id,
+                    atasanId:findAtasan && findAtasan.id,
+                    nomorKtp:data[i].nomorKtp,
+                    alamatKtp:data[i].alamatKtp,
+                    alamatDomisili:data[i].alamatDomisili,
+                    tempatLahir:data[i].tempatLahir,
+                    tanggalLahir:data[i].tanggalLahir,
+                    nomorNpwp:data[i].nomorNpwp,
+                    statusPerkawinanId:findStatusPerkawinan && findStatusPerkawinan.id,
+                    jumlahAnak:data[i].jumlahAnak,
+                    namaIbu:data[i].namaIbu,
+                    pendidikanId:findPendidikan && findPendidikan.id,
+                    namaSekolah:data[i].namaSekolah,
+                    jurusanSekolah:data[i].jurusanSekolah,
+                    tahunLulus:data[i].tahunLulus,
+                    ipk:data[i].ipk,
+                    nomorBpjsKesehatan:data[i].nomorBpjsKesehatan,
+                    nomorBpjsKetenagakerjaan:data[i].nomorBpjsKetenagakerjaan,
+                    contactEmergencyId:findContactEmergency && findContactEmergency.id,
+                    emergencyNumber:data[i].emergencyNumber,
+                    emergencyAddress:data[i].emergencyAddress,
+                    nomorSim:data[i].nomorSim,
+                    golonganDarahId:findGolonganDarah && findGolonganDarah.id,
+                    bankId:findBank && findBank.id,
+                    nomorRekening:data[i].nomorRekening,
+                    jamOperasionalId:findJamOperasional && findJamOperasional.id,
+                    groupId:findGroup && findGroup.id,
+                    quote:data[i].quote,
+                    statusId:findStatus && findStatus.id,
+                    isActive:data[i].isActive
+                });
+
+                console.log(createUser, 'data user');
+            }
+        } catch (error) {
+            return res.status(500).json({msg: error.message})
+        }
+
+        fs.unlinkSync(filePath);
+        
+        return res.status(201).json({msg: "success"});
+    });
 }

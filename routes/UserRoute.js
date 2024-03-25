@@ -6,7 +6,8 @@ import {
     getUsers, 
     getUsersTable,
     changePassword,
-    updateUser
+    updateUser,
+    importUsers
 } from '../controllers/Users.js';
 import { uploadPhoto } from '../controllers/PhotoProfile.js';
 
@@ -20,5 +21,6 @@ router.patch('/users/:id', updateUser);
 router.patch('/users/:id/password', changePassword);
 router.patch('/users/:id/photo', uploadPhoto);
 router.delete('/users/:id', deleteUser);
+router.post('/users/import', importUsers);
 
 export default router;
