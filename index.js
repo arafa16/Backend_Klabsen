@@ -58,7 +58,7 @@ const store = new sessionStore({
 app.use(session({
     secret: process.env.SESS_SECRET,
     resave: false,
-    proxy: false,
+    proxy: true,
     saveUninitialized: true,
     store:store,
     cookie: {
