@@ -112,25 +112,6 @@ app.use(express.static("public"));
 
 store.sync();
 
-// Add headers before the routes are defined
-app.use(function (req, res, next) {
-
-    // Website you wish to allow to connect
-    res.setHeader('Access-Control-Allow-Origin', `${process.env.URL_ORIGIN}`);
-
-    // Request methods you wish to allow
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-
-    // Request headers you wish to allow
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-
-    // to the API (e.g. in case you use sessions)
-    res.setHeader('Access-Control-Allow-Credentials', true);
-
-    // Pass to next layer of middleware
-    next();
-});
-
 // jadwal penarikan data absen
 // cron.schedule('*/1 * * * *', function() {
 //     testInOut('20.30.3.22').then(
