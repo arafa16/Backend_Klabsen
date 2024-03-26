@@ -51,9 +51,9 @@ const store = new sessionStore({
     db:db
 });
 
-// (async()=>{
-//     await db.sync();
-// })();
+(async()=>{
+    await db.sync();
+})();
 
 app.use(session({
     secret: process.env.SESS_SECRET,
@@ -110,7 +110,7 @@ app.use(ResetPassword);
 //setup public folder
 app.use(express.static("public"));
 
-// store.sync();
+store.sync();
 
 // jadwal penarikan data absen
 // cron.schedule('*/1 * * * *', function() {
