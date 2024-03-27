@@ -20,10 +20,7 @@ export const getJamOperasionalsTable = async(req, res) => {
     try {
         const response = await JamOperasional.findAndCountAll({
             limit:limit,
-            offset:offset,
-            include:{
-                model:TipeAbsen
-            }
+            offset:offset
         });
 
         return res.status(200).json(response);
@@ -55,7 +52,6 @@ export const createJamOperasional = async(req, res) => {
             jamPulang:jamPulang,
             keterangan:keterangan,
             code:code,
-            tipeAbsenId:tipeAbsenId,
             isActive:isActive
         });
 
@@ -83,7 +79,6 @@ export const updateJamOperasional = async(req, res) => {
             jamPulang:jamPulang,
             keterangan:keterangan,
             code:code,
-            tipeAbsenId:tipeAbsenId,
             isActive:isActive
         });
 
