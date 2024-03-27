@@ -236,7 +236,6 @@ export const createInOutByAbsenWeb = async(req, res) => {
                 const findJamOperasionalsTerakhir = await JamOperasional.findAll({
                     limit:1,
                     where:{
-                        tipeAbsenId:1,
                         code:1
                     },
                     order: [ [ 'createdAt', 'DESC' ]]
@@ -329,7 +328,6 @@ export const createInOutByAbsenWeb = async(req, res) => {
             const findJamOperasionalsTerakhir = await JamOperasional.findAll({
                 limit:1,
                 where:{
-                    // tipeAbsenId:1,
                     code:'1'
                 },
                 order: [ [ 'createdAt', 'DESC' ]]
@@ -461,7 +459,6 @@ export const createInOutByAbsenWeb = async(req, res) => {
                 const findJamOperasionalsTerakhir = await JamOperasional.findAll({
                     limit:1,
                     where:{
-                        // tipeAbsenId:4,
                         code:2
                     },
                     order: [ [ 'createdAt', 'DESC' ]]
@@ -554,7 +551,6 @@ export const createInOutByAbsenWeb = async(req, res) => {
             const findJamOperasionalsTerakhir = await JamOperasional.findAll({
                 limit:1,
                 where:{
-                    // tipeAbsenId:1,
                     code:2
                 },
                 order: [ [ 'createdAt', 'DESC' ]]
