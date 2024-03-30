@@ -113,8 +113,8 @@ app.use(express.static("public"));
 store.sync();
 
 // jadwal penarikan data absen
-cron.schedule('*/1 * * * *', function() {
-    testInOut('202.152.5.198:8070').then(
+// cron.schedule('*/1 * * * *', function() {
+//     testInOut('202.152.5.198:8070').then(
 //     // testInOut('202.152.5.198:8070').then(
 //         // ()=>{
 //         //     console.log('penarikan rukan mulai');
@@ -129,8 +129,8 @@ cron.schedule('*/1 * * * *', function() {
 //         //                 });
 //         //         });
 //         // }
-        );
-});
+//         );
+// });
 
 app.listen(process.env.PORT,()=>{
     console.log(`server running at port ${process.env.PORT}`)
