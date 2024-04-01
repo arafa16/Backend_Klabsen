@@ -1944,8 +1944,8 @@ export const getDataByFinger = async(req, res) => {
 
     try {
         const datas = await FingerprintSolution.download('202.152.5.198:8070', []);
-        console.log(datas, 'data finger');
-        
+        console.log(datas.status, 'data finger');
+
         const dateNow = new Date();
         dateNow.setDate(dateNow.getDate() - 14);
         const min = date.format(dateNow, 'YYYY-MM-DD HH:mm:ss');
