@@ -2692,6 +2692,8 @@ export const getDataByIdAndMonth = async(req, res)=>{
     const startDate = date.format(new Date(tanggalMulai), 'YYYY-MM-DD HH:mm:ss');
     const endDate = date.format(new Date(tanggalSelesai), 'YYYY-MM-DD HH:mm:ss');
 
+    console.log('test');
+    
     try {
         const findUser = await Users.findOne({
             where:{
