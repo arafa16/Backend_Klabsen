@@ -40,6 +40,7 @@ import Event from './routes/EventRoute.js';
 import TipeEvent from './routes/TipeEventRoute.js';
 import Perhitungan from './routes/PerhitunganRoute.js';
 import ResetPassword from './routes/ResetPasswordRoute.js';
+import MesinAbsen from './routes/MesinAbsenRoute.js';
 import cron from 'node-cron';
 
 const app = express();
@@ -106,6 +107,7 @@ app.use(Event);
 app.use(TipeEvent);
 app.use(Perhitungan);
 app.use(ResetPassword);
+app.use(MesinAbsen);
 
 //setup public folder
 app.use(express.static("public"));
