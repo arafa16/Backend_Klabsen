@@ -1,5 +1,6 @@
 import { where } from "sequelize";
 import MesinAbsen from "../models/MesinAbsenModal.js";
+import { testInOut } from "./InOut.js";
 
 export const getMesinAbsen = async(req, res) => {
     try {
@@ -16,7 +17,7 @@ export const getMesinAbsenTable = async(req, res) => {
     const page = parseInt(req.params.page);
 
     const offset = (page - 1) * limit;
-    
+
     try {
         const response = await MesinAbsen.findAndCountAll({
             limit:limit,
@@ -97,5 +98,41 @@ export const deleteMesinAbsen = async(req, res) => {
         return res.status(200).json({msg: "success"});
     } catch (error) {
         return res.status(500).json({msg: error.message});
+    }
+}
+
+export const getDataMesinAbsen = async(req, res) => {
+
+    const findIpMesin = await MesinAbsen.findAll();
+
+    if(!findIpMesin) return res.status(404).json({msg: "tidak ada IP mesin absen"});
+    
+    try {
+        for(let i = 0; i < findIpMesin.length; i++){
+            testInOut(findIpMesin[i].ipMesin);
+            console.log(findIpMesin[i], 'find mesin absen');
+        }
+
+        return res.status(200).json(findIpMesin[0].ipMesin);
+    } catch (error) {
+        return res.status(500).json({msg: error.message});
+    }
+}
+
+export const getDataMesinAbsenCron = async(req, res) => {
+
+    const findIpMesin = await MesinAbsen.findAll();
+
+    if(!findIpMesin) return res.status(404).json({msg: "tidak ada IP mesin absen"});
+    
+    try {
+        for(let i = 0; i < findIpMesin.length; i++){
+            testInOut(findIpMesin[i].ipMesin);
+            console.log(findIpMesin[i], 'find mesin absen');
+        }
+        
+        console.log('get data success');
+    } catch (error) {
+        console.log(error);
     }
 }

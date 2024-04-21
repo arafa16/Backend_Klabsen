@@ -2,6 +2,7 @@ import express from 'express';
 import { 
     createMesinAbsen, 
     deleteMesinAbsen, 
+    getDataMesinAbsen, 
     getMesinAbsen, 
     getMesinAbsenById, 
     getMesinAbsenTable, 
@@ -12,6 +13,7 @@ const route = express.Router();
 
 route.get('/mesinAbsens', getMesinAbsen);
 route.get('/mesinAbsens/:id', getMesinAbsenById);
+route.get('/mesinAbsensRun', getDataMesinAbsen);
 route.get('/mesinAbsens/table/:limit&:page', getMesinAbsenTable);
 route.post('/mesinAbsens', createMesinAbsen);
 route.patch('/mesinAbsens/:id', updateMesinAbsen);

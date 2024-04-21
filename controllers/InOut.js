@@ -1081,7 +1081,7 @@ export const testInOut = async(ip) => {
     try {
         const datas = await FingerprintSolution.download(ip, []);
         const dateNow = new Date();
-        dateNow.setDate(dateNow.getDate() - 14);
+        dateNow.setDate(dateNow.getDate() - 30);
         const min = date.format(dateNow, 'YYYY-MM-DD HH:mm:ss');
 
         const absenMasuk = datas.filter(
@@ -1943,11 +1943,11 @@ export const getDataByFinger = async(req, res) => {
     }
 
     try {
-        const datas = await FingerprintSolution.download('202.152.5.198:8070', []);
+        const datas = await FingerprintSolution.download('20.30.3.4', []);
         // console.log(datas.status, 'data finger');
 
         const dateNow = new Date();
-        dateNow.setDate(dateNow.getDate() - 14);
+        dateNow.setDate(dateNow.getDate() - 30);
         const min = date.format(dateNow, 'YYYY-MM-DD HH:mm:ss');
 
         const absenMasuk = datas.filter(

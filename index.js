@@ -7,6 +7,7 @@ import db from './config/Database.js';
 import fileUpload from 'express-fileupload';
 //controller
 import { getDataFinger, testInOut} from './controllers/InOut.js';
+import { getDataMesinAbsenCron } from './controllers/MesinAbsenController.js';
 
 //route
 import UserRoute from './routes/UserRoute.js';
@@ -115,24 +116,9 @@ app.use(express.static("public"));
 store.sync();
 
 // jadwal penarikan data absen
-// cron.schedule('*/1 * * * *', function() {
-//     testInOut('202.152.5.198:8070').then(
-//     // testInOut('202.152.5.198:8070').then(
-//         // ()=>{
-//         //     console.log('penarikan rukan mulai');
-//         //     testInOut('103.160.12.10').sthen(()=>{
-//         //             console.log('penarikan tebet mulai')
-//         //             testInOut('103.171.31.60').then(()=>{
-//         //                     console.log('penarikan cipinang');
-//         //                     testInOut('183.91.71.228:9001').then(()=>{
-//         //                         console.log('penarikan bandung');
-//         //                         testInOut('183.91.71.228:9080')
-//         //                     });
-//         //                 });
-//         //         });
-//         // }
-//         );
-// });
+cron.schedule('*/1 * * * *', function() {
+    getDataMesinAbsenCron();
+});
 
 app.listen(process.env.PORT,()=>{
     console.log(`server running at port ${process.env.PORT}`)
