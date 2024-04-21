@@ -15,13 +15,14 @@ export const getMesinAbsen = async(req, res) => {
 export const getMesinAbsenTable = async(req, res) => {
     const limit = parseInt(req.params.limit);
     const page = parseInt(req.params.page);
+    const status = req.params.status;
 
     const offset = (page - 1) * limit;
 
     try {
         const response = await MesinAbsen.findAndCountAll({
             limit:limit,
-            offset:offset,
+            offset:offset
         });
 
         return res.status(200).json(response);
@@ -45,12 +46,14 @@ export const getMesinAbsenById = async(req, res) => {
 }
 
 export const createMesinAbsen = async(req, res) => {
-    const {name, ipMesin} = req.body;
+    const {name, ipMesin, code, isActive} = req.body;
 
     try {
         await MesinAbsen.create({
             name:name,
-            ipMesin:ipMesin
+            ipMesin:ipMesin,
+            code:code,
+            isActive:isActive
         });
 
         return res.status(200).json({msg: "success"});
@@ -60,7 +63,7 @@ export const createMesinAbsen = async(req, res) => {
 }
 
 export const updateMesinAbsen = async(req, res) => {
-    const {name, ipMesin} = req.body;
+    const {name, ipMesin, code, isActive} = req.body;
 
     const findMesin = await MesinAbsen.findOne({
         where:{
@@ -73,7 +76,9 @@ export const updateMesinAbsen = async(req, res) => {
     try {
         await findMesin.update({
             name:name,
-            ipMesin:ipMesin
+            ipMesin:ipMesin,
+            code:code,
+            isActive:isActive
         });
 
         return res.status(200).json({msg: "success"});

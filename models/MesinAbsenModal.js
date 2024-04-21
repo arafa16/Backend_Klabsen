@@ -26,6 +26,10 @@ const MesinAbsen = db.define('mesin_absen', {
             notEmpty: true
         }
     },
+    code:{
+        type: DataTypes.DECIMAL,
+        allowNull:true
+    },
     isActive:{
         type: DataTypes.BOOLEAN,
         defaultValue:true

@@ -5,8 +5,8 @@ import session from 'express-session';
 import SequelizeStore from 'connect-session-sequelize';
 import db from './config/Database.js';
 import fileUpload from 'express-fileupload';
+
 //controller
-import { getDataFinger, testInOut} from './controllers/InOut.js';
 import { getDataMesinAbsenCron } from './controllers/MesinAbsenController.js';
 
 //route
