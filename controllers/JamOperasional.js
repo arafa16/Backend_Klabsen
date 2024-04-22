@@ -1,9 +1,13 @@
+import JamOperasionalGroup from "../models/JamOperasionalGroupModal.js";
 import JamOperasional from "../models/JamOperasionalModal.js";
-import TipeAbsen from "../models/TipeAbsenModal.js";
 
 export const getJamOperasionals = async(req, res) => {
     try {
-        const response = await JamOperasional.findAll();
+        const response = await JamOperasional.findAll({
+            include:[{
+                model:JamOperasionalGroup
+            }]
+        });
 
         return res.status(200).json(response);
     } catch (error) {
@@ -20,7 +24,12 @@ export const getJamOperasionalsTable = async(req, res) => {
     try {
         const response = await JamOperasional.findAndCountAll({
             limit:limit,
-            offset:offset
+            offset:offset,
+            include:[
+                {
+                    model:JamOperasionalGroup
+                }
+            ]
         });
 
         return res.status(200).json(response);
@@ -34,7 +43,10 @@ export const getJamOperasionalById = async(req, res) => {
         const response = await JamOperasional.findOne({
             where:{
                 uuid:req.params.id
-            }
+            },
+            include:[{
+                model:JamOperasionalGroup
+            }]
         });
 
         return res.status(200).json(response);
@@ -44,7 +56,16 @@ export const getJamOperasionalById = async(req, res) => {
 }
 
 export const createJamOperasional = async(req, res) => {
-    const {name, jamMasuk, jamPulang, code, keterangan, tipeAbsenId, isActive} = req.body;
+    const {name, jamMasuk, jamPulang, keterangan, code, jamOperasionalGroupId, isActive} = req.body;
+
+    const findJamOperasionalGroup = await JamOperasionalGroup.findOne({
+        where:{
+            uuid:jamOperasionalGroupId
+        }
+    });
+
+    if(!findJamOperasionalGroup) return res.status(404).json({msg: "not found"});
+
     try {
         await JamOperasional.create({
             name:name,
@@ -52,6 +73,7 @@ export const createJamOperasional = async(req, res) => {
             jamPulang:jamPulang,
             keterangan:keterangan,
             code:code,
+            jamOperasionalGroupId:findJamOperasionalGroup.id,
             isActive:isActive
         });
 
@@ -62,7 +84,7 @@ export const createJamOperasional = async(req, res) => {
 }
 
 export const updateJamOperasional = async(req, res) => {
-    const {name, jamMasuk, jamPulang, code, keterangan, tipeAbsenId, isActive} = req.body;
+    const {name, jamMasuk, jamPulang, code, keterangan, jamOperasionalGroupId, isActive} = req.body;
 
     const response = await JamOperasional.findOne({
         where:{
@@ -72,6 +94,14 @@ export const updateJamOperasional = async(req, res) => {
 
     if(!response) return res.status(404).json({msg: "not found"});
 
+    const findJamOperasionalGroup = await JamOperasionalGroup.findOne({
+        where:{
+            uuid:jamOperasionalGroupId
+        }
+    });
+
+    if(!findJamOperasionalGroup) return res.status(404).json({msg: "not found"});
+
     try {
         response.update({
             name:name,
@@ -79,6 +109,7 @@ export const updateJamOperasional = async(req, res) => {
             jamPulang:jamPulang,
             keterangan:keterangan,
             code:code,
+            jamOperasionalGroupId:findJamOperasionalGroup.id,
             isActive:isActive
         });
 

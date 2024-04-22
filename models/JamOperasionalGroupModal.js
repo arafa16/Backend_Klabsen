@@ -1,10 +1,9 @@
 import {Sequelize} from 'sequelize';
 import db from '../config/Database.js';
-import JamOperasionalGroup from './JamOperasionalGroupModal.js';
 
 const {DataTypes} = Sequelize;
 
-const JamOperasional = db.define('jam_operasional', {
+const JamOperasionalGroup = db.define('jam_operasional_group', {
     uuid:{
         type: DataTypes.STRING,
         defaultValue: DataTypes.UUIDV4,
@@ -20,20 +19,6 @@ const JamOperasional = db.define('jam_operasional', {
             notEmpty: true
         }
     },
-    jamMasuk:{
-        type: DataTypes.TIME,
-        allowNull:false,
-        validate:{
-            notEmpty: true
-        }
-    },
-    jamPulang:{
-        type: DataTypes.TIME,
-        allowNull:false,
-        validate:{
-            notEmpty: true
-        }
-    },
     keterangan:{
         type: DataTypes.STRING,
         allowNull:true
@@ -42,17 +27,10 @@ const JamOperasional = db.define('jam_operasional', {
         type: DataTypes.STRING,
         allowNull:true
     },
-    jamOperasionalGroupId:{
-        type: DataTypes.INTEGER,
-        allowNull:true
-    },
     isActive:{
         type: DataTypes.BOOLEAN,
         defaultValue:true
     }
 });
 
-JamOperasionalGroup.hasMany(JamOperasional);
-JamOperasional.belongsTo(JamOperasionalGroup, {foreignKey: 'jamOperasionalGroupId'});
-
-export default JamOperasional;
+export default JamOperasionalGroup;

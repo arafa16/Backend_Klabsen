@@ -19,6 +19,7 @@ import StatusPerkawinanRoute from './routes/StatusPerkawinanRoute.js';
 import ContactEmergencyRoute from './routes/ContactEmergencyRoute.js';
 import BankRoute from './routes/BankRoute.js';
 import GolonganDarahRoute from './routes/GolonganDarahRoute.js';
+import JamOperasionalGroupRoute from './routes/JamOperasionalGroupRoute.js';
 import JamOperasionalRoute from './routes/JamOperasionalRoute.js';
 import StatusRoute from './routes/StatusRoute.js';
 import PelanggaranRoute from './routes/PelanggaranRoute.js';
@@ -53,9 +54,9 @@ const store = new sessionStore({
     db:db
 });
 
-// (async()=>{
-//     await db.sync();
-// })();
+(async()=>{
+    await db.sync();
+})();
 
 app.use(session({
     secret: process.env.SESS_SECRET,
@@ -87,6 +88,7 @@ app.use(ContactEmergencyRoute);
 app.use(BankRoute);
 app.use(GolonganDarahRoute);
 app.use(JamOperasionalRoute);
+app.use(JamOperasionalGroupRoute);
 app.use(StatusRoute);
 app.use(PelanggaranRoute);
 app.use(StatusInoutRoute);

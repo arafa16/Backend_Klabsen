@@ -12,6 +12,7 @@ import GolonganDarah from './GolonganDarahModel.js';
 import Group from './GroupModal.js';
 import Gander from './GanderModal.js';
 import Privilege from './PrivilegeModal.js';
+import JamOperasionalGroup from './JamOperasionalGroupModal.js';
  
 const {DataTypes} = Sequelize;
  
@@ -181,7 +182,11 @@ const Users = db.define('users',{
         type: DataTypes.STRING,
         allowNull:true
     },
-    jamOperasionalId:{
+    // jamOperasionalId:{
+    //     type: DataTypes.INTEGER,
+    //     allowNull:true
+    // },
+    jamOperasionalGroupId:{
         type: DataTypes.INTEGER,
         allowNull:true
     },
@@ -235,8 +240,11 @@ Users.belongsTo(ContactEmergency, {foreignKey: 'contactEmergencyId'});
 GolonganDarah.hasMany(Users);
 Users.belongsTo(GolonganDarah, {foreignKey: 'golonganDarahId'});
 
-JamOperasional.hasMany(Users);
-Users.belongsTo(JamOperasional, {foreignKey: 'jamOperasionalId'});
+// JamOperasional.hasMany(Users);
+// Users.belongsTo(JamOperasional, {foreignKey: 'jamOperasionalId'});
+
+JamOperasionalGroup.hasMany(Users);
+Users.belongsTo(JamOperasionalGroup, {foreignKey: 'jamOperasionalGroupId'});
 
 Group.hasMany(Users);
 Users.belongsTo(Group, {foreignKey: 'groupId'});

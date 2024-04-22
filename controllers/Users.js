@@ -16,6 +16,7 @@ import Privilege from "../models/PrivilegeModal.js";
 import path from 'path';
 import fs from 'fs';
 import xlsx from 'xlsx';
+import JamOperasionalGroup from "../models/JamOperasionalGroupModal.js";
 
 export const getUsers = async(req, res) => {
     try {
@@ -54,8 +55,8 @@ export const getUsers = async(req, res) => {
                     attributes:['uuid','name']
                 },
                 {
-                    model:JamOperasional,
-                    attributes:['uuid','name','jamMasuk','jamPulang','keterangan']
+                    model:JamOperasionalGroup,
+                    attributes:['uuid','name','keterangan','code','isActive']
                 },
                 {
                     model:Group,
@@ -125,8 +126,8 @@ export const getUsersTable = async(req, res) => {
                         attributes:['uuid','name']
                     },
                     {
-                        model:JamOperasional,
-                        attributes:['uuid','name','jamMasuk','jamPulang','keterangan']
+                        model:JamOperasionalGroup,
+                        attributes:['uuid','name','keterangan','code','isActive']
                     },
                     {
                         model:Group,
@@ -244,8 +245,8 @@ export const getUserById = async(req, res) => {
                     attributes:['uuid','name']
                 },
                 {
-                    model:JamOperasional,
-                    attributes:['uuid','name','jamMasuk','jamPulang','keterangan']
+                    model:JamOperasionalGroup,
+                    attributes:['uuid','name','keterangan','code','isActive']
                 },
                 {
                     model:Group,
@@ -306,7 +307,7 @@ export const createUser = async(req, res) => {
             golonganDarahId,
             bankId,
             nomorRekening,
-            jamOperasionalId,
+            jamOperasionalGroupId,
             groupId,
             password,
             quote,
@@ -352,7 +353,7 @@ export const createUser = async(req, res) => {
             golonganDarahId:golonganDarahId,
             bankId:bankId,
             nomorRekening:nomorRekening,
-            jamOperasionalId:jamOperasionalId,
+            jamOperasionalGroupId:jamOperasionalGroupId,
             groupId:groupId,
             quote:quote,
             statusId:statusId,
@@ -408,7 +409,7 @@ export const updateUser = async(req, res) => {
         golonganDarahId,
         bankId,
         nomorRekening,
-        jamOperasionalId,
+        jamOperasionalGroupId,
         groupId,
         quote,
         statusId,
@@ -450,7 +451,7 @@ export const updateUser = async(req, res) => {
             golonganDarahId:golonganDarahId,
             bankId:bankId,
             nomorRekening:nomorRekening,
-            jamOperasionalId:jamOperasionalId,
+            jamOperasionalGroupId:jamOperasionalGroupId,
             groupId:groupId,
             quote:quote,
             statusId:statusId,
@@ -589,9 +590,9 @@ export const importUsers = async(req, res) => {
                     attributes:['id','name']
                 })
 
-                const findJamOperasional = await JamOperasional.findOne({
+                const findJamOperasionalGroup = await JamOperasionalGroup.findOne({
                     where:{
-                        name:data[i].jamOperasional
+                        name:data[i].jamOperasionalGroup
                     },
                     attributes:['id','name']
                 })
@@ -647,7 +648,7 @@ export const importUsers = async(req, res) => {
                     golonganDarahId:findGolonganDarah && findGolonganDarah.id,
                     bankId:findBank && findBank.id,
                     nomorRekening:data[i].nomorRekening,
-                    jamOperasionalId:findJamOperasional && findJamOperasional.id,
+                    jamOperasionalGroupId:findJamOperasionalGroup && findJamOperasionalGroup.id,
                     groupId:findGroup && findGroup.id,
                     quote:data[i].quote,
                     statusId:findStatus && findStatus.id,
