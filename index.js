@@ -118,7 +118,7 @@ app.use(express.static("public"));
 store.sync();
 
 // jadwal penarikan data absen
-cron.schedule('*/10 * * * *', function() {
+cron.schedule('*/1 * * * *', function() {
     getDataMesinAbsenCron();
 });
 
