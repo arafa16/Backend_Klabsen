@@ -72,7 +72,7 @@ app.use(session({
 }));
 
 app.use(cors({
-    credentials: true,
+    credentials: false,
     origin: [process.env.LINK_FRONTEND, process.env.URL_ORIGIN]
 }));
 
