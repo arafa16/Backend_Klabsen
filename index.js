@@ -50,9 +50,9 @@ dotenv.config();
 
 const sessionStore = SequelizeStore(session.Store);
 
-const store = new sessionStore({
-    db:db
-});
+// const store = new sessionStore({
+//     db:db
+// });
 
 (async()=>{
     await db.sync();
@@ -72,7 +72,7 @@ app.use(session({
 }));
 
 app.use(cors({
-    credentials: true,
+    // credentials: true,
     origin: [process.env.LINK_FRONTEND, process.env.URL_ORIGIN]
 }));
 
