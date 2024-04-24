@@ -61,7 +61,7 @@ const store = new sessionStore({
 app.use(session({
     secret: process.env.SESS_SECRET,
     resave: false,
-    proxy: true,
+    // proxy: true,
     saveUninitialized: true,
     store:store,
     cookie: {
@@ -72,7 +72,7 @@ app.use(session({
 }));
 
 app.use(cors({
-    credentials: false,
+    // credentials: true,
     origin: [process.env.LINK_FRONTEND, process.env.URL_ORIGIN]
 }));
 
