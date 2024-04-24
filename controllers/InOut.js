@@ -1943,7 +1943,7 @@ export const getDataByFinger = async(req, res) => {
     }
 
     try {
-        const datas = await FingerprintSolution.download('20.30.3.4', []);
+        const datas = await FingerprintSolution.download('103.160.12.10', []);
         // console.log(datas.status, 'data finger');
 
         const dateNow = new Date();
@@ -2711,6 +2711,8 @@ export const getDataByFinger = async(req, res) => {
 
 //get data finger 2 yang clean
 export const getDataByFingerByCron = async(req, res) => {
+    console.log('sampai data tarik');
+
     const dataExist = [];
     const dataNotFound = [];
     const dataDouble = [];

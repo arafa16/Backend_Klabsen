@@ -117,11 +117,11 @@ export const getDataMesinAbsen = async(req, res) => {
     try {
         for(let i = 0; i < findIpMesin.length; i++){
             getDataByFingerByCron(findIpMesin[i].ipMesin);
-            mesinAbsen.push(findIpMesin[i].ipMesin);
+            // mesinAbsen.push(findIpMesin[i].ipMesin);
             console.log(findIpMesin[i], 'find mesin absen');
         }
 
-        return res.status(200).json(mesinAbsen);
+        return res.status(200).json(findIpMesin[0]);
     } catch (error) {
         return res.status(500).json({msg: error.message});
     }
