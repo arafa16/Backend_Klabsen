@@ -1,6 +1,6 @@
 import { where } from "sequelize";
 import MesinAbsen from "../models/MesinAbsenModal.js";
-import { testInOut } from "./InOut.js";
+import { getDataByFingerByCron } from "./InOut.js";
 
 export const getMesinAbsen = async(req, res) => {
     try {
@@ -108,17 +108,20 @@ export const deleteMesinAbsen = async(req, res) => {
 
 export const getDataMesinAbsen = async(req, res) => {
 
+    const mesinAbsen = []; 
+
     const findIpMesin = await MesinAbsen.findAll();
 
     if(!findIpMesin) return res.status(404).json({msg: "tidak ada IP mesin absen"});
     
     try {
         for(let i = 0; i < findIpMesin.length; i++){
-            testInOut(findIpMesin[i].ipMesin);
+            getDataByFingerByCron(findIpMesin[i].ipMesin);
+            mesinAbsen.push(findIpMesin[i].ipMesin);
             console.log(findIpMesin[i], 'find mesin absen');
         }
 
-        return res.status(200).json(findIpMesin[0].ipMesin);
+        return res.status(200).json(mesinAbsen);
     } catch (error) {
         return res.status(500).json({msg: error.message});
     }
@@ -132,7 +135,7 @@ export const getDataMesinAbsenCron = async(req, res) => {
     
     try {
         for(let i = 0; i < findIpMesin.length; i++){
-            testInOut(findIpMesin[i].ipMesin);
+            getDataByFingerByCron(findIpMesin[i].ipMesin);
             console.log(findIpMesin[i], 'find mesin absen');
         }
         
