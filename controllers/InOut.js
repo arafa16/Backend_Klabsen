@@ -2710,7 +2710,7 @@ export const getDataByFinger = async(req, res) => {
 }
 
 //get data finger 2 yang clean
-export const getDataByFingerByCron = async(req, res) => {
+export const getDataByFingerByCron = async(ip) => {
     console.log('sampai data tarik');
 
     const dataExist = [];
@@ -2857,7 +2857,7 @@ export const getDataByFingerByCron = async(req, res) => {
     }
 
     try {
-        const datas = await FingerprintSolution.download('20.30.3.4', []);
+        const datas = await FingerprintSolution.download(ip, []);
         // console.log(datas.status, 'data finger');
 
         const dateNow = new Date();
