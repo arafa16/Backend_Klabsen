@@ -116,7 +116,8 @@ export const getDataMesinAbsen = async(req, res) => {
     
     try {
         for(let i = 0; i < findIpMesin.length; i++){
-            await getDataByFingerByCron(findIpMesin[i].ipMesin);
+            const ip = findIpMesin[i].ipMesin;
+            await getDataByFingerByCron(ip);
             // mesinAbsen.push(findIpMesin[i].ipMesin);
             console.log(findIpMesin[i], 'find mesin absen');
         }
@@ -135,8 +136,9 @@ export const getDataMesinAbsenCron = async(req, res) => {
     
     try {
         for(let i = 0; i < findIpMesin.length; i++){
-            await getDataByFingerByCron(findIpMesin[i].ipMesin);
-            console.log(findIpMesin[i], 'find mesin absen');
+            const ip = findIpMesin[i].ipMesin;
+            await getDataByFingerByCron(ip);
+            // console.log(findIpMesin[i], 'find mesin absen');
         }
         
         console.log('get data success');
