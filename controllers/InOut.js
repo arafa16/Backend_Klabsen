@@ -2858,7 +2858,7 @@ export const getDataByFingerByCron = async(ip) => {
 
     try {
         const datas = await FingerprintSolution.download(ip, []);
-        // console.log(datas.status, 'data finger');
+        console.log(datas, 'data finger');
 
         const dateNow = new Date();
         dateNow.setDate(dateNow.getDate() - 30);
