@@ -116,12 +116,12 @@ export const getDataMesinAbsen = async(req, res) => {
     
     try {
         for(let i = 0; i < findIpMesin.length; i++){
-            getDataByFingerByCron(findIpMesin[i].ipMesin);
+            await getDataByFingerByCron(findIpMesin[i].ipMesin);
             // mesinAbsen.push(findIpMesin[i].ipMesin);
             console.log(findIpMesin[i], 'find mesin absen');
         }
 
-        return res.status(200).json(findIpMesin[0]);
+        return res.status(200).json(findIpMesin[0].ipMesin);
     } catch (error) {
         return res.status(500).json({msg: error.message});
     }
@@ -135,7 +135,7 @@ export const getDataMesinAbsenCron = async(req, res) => {
     
     try {
         for(let i = 0; i < findIpMesin.length; i++){
-            getDataByFingerByCron(findIpMesin[i].ipMesin);
+            await getDataByFingerByCron(findIpMesin[i].ipMesin);
             console.log(findIpMesin[i], 'find mesin absen');
         }
         
