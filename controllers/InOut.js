@@ -2711,7 +2711,7 @@ export const getDataByFinger = async(req, res) => {
 
 //get data finger 2 yang clean
 export const getDataByFingerByCron = async(ip) => {
-    console.log('sampai data tarik');
+    console.log(ip, 'sampai data tarik');
 
     const dataExist = [];
     const dataNotFound = [];

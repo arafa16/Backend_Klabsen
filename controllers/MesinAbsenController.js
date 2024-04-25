@@ -122,6 +122,7 @@ export const getDataMesinAbsen = async(req, res) => {
             console.log(findIpMesin[i], 'find mesin absen');
         }
 
+        console.log('get data success');
         return res.status(200).json(findIpMesin[0].ipMesin);
     } catch (error) {
         return res.status(500).json({msg: error.message});
