@@ -1,6 +1,6 @@
 module.exports = {
 	apps : [{
-		name	: "klabsen",
+		name	: "klabsen_api",
 		script	: "nodemon index"
 	}]
 }
