@@ -183,8 +183,8 @@ export const getUsersTable = async(req, res) => {
                         attributes:['uuid','name']
                     },
                     {
-                        model:JamOperasional,
-                        attributes:['uuid','name','jamMasuk','jamPulang','keterangan']
+                        model:JamOperasionalGroup,
+                        attributes:['uuid','name','keterangan','code','isActive']
                     },
                     {
                         model:Group,
