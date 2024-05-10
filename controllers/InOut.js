@@ -301,7 +301,10 @@ export const createInOutByAbsenWeb = async(req, res) => {
                             [Op.lte]: dateFormat + ' 23:59:59',
                             }
                     }
-                }
+                },
+                include:[{
+                    model:JamOperasional
+                }]
             })
     
             const findInOut = await InOut.findOne({
@@ -337,6 +340,7 @@ export const createInOutByAbsenWeb = async(req, res) => {
                 res.status(200).json({msg: "anda sudah absen"});
             }
             else{
+                console.log(findIn.jam_operasional.jamPulang,timeFormat, 'find in');
                 if(findIn === null){
                     
                     //mencari id tipe absen code 11 (tipe tidak absen masuk)
@@ -369,9 +373,12 @@ export const createInOutByAbsenWeb = async(req, res) => {
                         jamOperasionalId:findJamOperasionalsTerakhir[0].id
                     });
 
+                    const absenBarerPulang = new Date(dateFormat + ' ' + findJamOperasionalsTerakhir[0].jamPulang);
+                    const absenBarerFormatJam = date.format(absenBarerPulang, 'HH:mm:ss');
+
                     //cek Jam Pulang
-                    if(findJamOperasionalsTerakhir[0].jamPulang > timeFormat){
-                        //tidak ditemukan absen masuk -> upload absen pulang
+                    if( absenBarerFormatJam > timeFormat){
+                        //pulang tidak telat
                         await InOut.create({
                             userId:findUser.id,
                             tipeAbsenId:findTipeAbsen.id,
@@ -383,14 +390,14 @@ export const createInOutByAbsenWeb = async(req, res) => {
                         });
                     }
                     else{
-                        //tidak ditemukan absen masuk -> upload absen pulang
+                        //pulang telat
                         await InOut.create({
                             userId:findUser.id,
                             tipeAbsenId:findTipeAbsen.id,
                             tanggalMulai:tanggalMulai,
                             tanggalSelesai:tanggalSelesai,
                             pelanggaranId:normal.id,
-                            statusInoutId:1,
+                            statusInoutId:2,
                             jamOperasionalId:findJamOperasionalsTerakhir[0].id
                         });
                     }
@@ -398,18 +405,51 @@ export const createInOutByAbsenWeb = async(req, res) => {
                     res.status(200).json({msg: "absen pulang berhasil tapi anda tidak absen masuk"});
                 }
                 else{
-                    //absen masuk ditemukan -> upload absen pulang 
-                    await InOut.create({
-                        userId:findUser.id,
-                        tipeAbsenId:findTipeAbsen.id,
-                        tanggalMulai:tanggalMulai,
-                        tanggalSelesai:tanggalSelesai,
-                        pelanggaranId:1,
-                        statusInoutId:1,
-                        jamOperasionalId:findIn.jamOperasionalId
+                    const melanggar = await Pelanggaran.findOne({
+                        where:{
+                            code:2
+                        }
                     });
-    
-                    res.status(200).json({msg: "absen success"});
+
+                    const normal = await Pelanggaran.findOne({
+                        where:{
+                            code:1
+                        }
+                    });
+
+                    const absenBarerPulang = new Date(dateFormat + ' ' + findIn.jam_operasional.jamPulang);
+                    const absenBarerFormatJam = date.format(absenBarerPulang, 'HH:mm:ss');
+
+                    console.log(findIn, absenBarerPulang, absenBarerFormatJam, 'absenBarerFormatJam'); 
+
+                    if( absenBarerFormatJam > timeFormat){
+                        //absen pulang kurang dari waktu pulang
+                        await InOut.create({
+                            userId:findUser.id,
+                            tipeAbsenId:findTipeAbsen.id,
+                            tanggalMulai:tanggalMulai,
+                            tanggalSelesai:tanggalSelesai,
+                            pelanggaranId:normal.id,
+                            statusInoutId:1,
+                            jamOperasionalId:findIn.jamOperasionalId
+                        });
+        
+                        res.status(200).json({msg: "absen success"});
+                    }
+                    else{
+                        //absen masuk ditemukan -> upload absen pulang 
+                        await InOut.create({
+                            userId:findUser.id,
+                            tipeAbsenId:findTipeAbsen.id,
+                            tanggalMulai:tanggalMulai,
+                            tanggalSelesai:tanggalSelesai,
+                            pelanggaranId:melanggar.id,
+                            statusInoutId:1,
+                            jamOperasionalId:findIn.jamOperasionalId
+                        });
+
+                        res.status(200).json({msg: "absen success"});
+                    }
                 }
             }
         }

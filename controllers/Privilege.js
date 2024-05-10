@@ -52,23 +52,23 @@ export const createPrivilege = async(req, res) => {
         dashboard, 
         editUserSub, 
         absen, 
-        kalendarSub, 
-        pengajuanKoreksiSub, 
-        approvalKoreksiSub,
+        kalendarSub,
         absenModal,
         wfhModal,
         shiftModal,
+        absenCheck,
+        adminEvent,
+        perhitunganAbsen,
+        pengajuanKoreksiSub, 
+        approvalKoreksiSub,
+        approvalAllKoreksiSub,
+        employees,
+        dataEmployee,
         slipGaji,
         pendapatanSub,
         pendapatanLainSub,
         pendapatanAdminSub,
-        admin,
-        userSub,
-        eventSub,
-        koreksiAdminSub,
-        perhitunganNilaiSub,
-        etiket,
-        pengajuanKendalaSub,
+        attribute,
         setting
     } = req.body;
 
@@ -78,33 +78,34 @@ export const createPrivilege = async(req, res) => {
                             dashboard:dashboard, 
                             editUserSub:editUserSub, 
                             absen:absen, 
-                            kalendarSub:kalendarSub, 
-                            pengajuanKoreksiSub:pengajuanKoreksiSub, 
-                            approvalKoreksiSub:approvalKoreksiSub,
+                            kalendarSub:kalendarSub,
                             absenModal:absenModal,
                             wfhModal:wfhModal,
                             shiftModal:shiftModal,
+                            absenCheck:absenCheck,
+                            adminEvent:adminEvent,
+                            perhitunganAbsen:perhitunganAbsen,
+                            pengajuanKoreksiSub:pengajuanKoreksiSub, 
+                            approvalKoreksiSub:approvalKoreksiSub,
+                            approvalAllKoreksiSub:approvalAllKoreksiSub,
                             slipGaji:slipGaji,
                             pendapatanSub:pendapatanSub,
                             pendapatanLainSub:pendapatanLainSub,
                             pendapatanAdminSub:pendapatanAdminSub,
-                            admin:admin,
-                            userSub:userSub,
-                            eventSub:eventSub,
-                            koreksiAdminSub:koreksiAdminSub,
-                            perhitunganNilaiSub:perhitunganNilaiSub,
-                            etiket:etiket,
-                            pengajuanKendalaSub:pengajuanKendalaSub,
+                            employees:employees,
+                            dataEmployee:dataEmployee,
+                            attribute:attribute,
                             setting:setting
                         });
         
         const user = await Users.update({
-            privilegeId:privilege.id
-        },{
-            where:{
-                uuid:userId
+                privilegeId:privilege.id
+            },{
+                where:{
+                    uuid:userId
+                }
             }
-        })
+        )
 
         return res.status(201).json({msg: "success"});
     } catch (error) {
@@ -118,24 +119,25 @@ export const updatePrivilege = async(req, res) => {
         dashboard, 
         editUserSub, 
         absen, 
-        kalendarSub, 
-        pengajuanKoreksiSub, 
-        approvalKoreksiSub,
+        kalendarSub,
         absenModal,
         wfhModal,
         shiftModal,
+        absenCheck,
+        adminEvent,
+        perhitunganAbsen,
+        pengajuanKoreksiSub, 
+        approvalKoreksiSub,
+        approvalAllKoreksiSub,
+        employees,
+        dataEmployee,
         slipGaji,
         pendapatanSub,
         pendapatanLainSub,
         pendapatanAdminSub,
-        admin,
-        userSub,
-        eventSub,
-        koreksiAdminSub,
-        perhitunganNilaiSub,
-        etiket,
-        pengajuanKendalaSub,
-        setting} = req.body;
+        attribute,
+        setting    
+        } = req.body;
     
     const response = await Privilege.findOne({
         where:{
@@ -151,23 +153,23 @@ export const updatePrivilege = async(req, res) => {
             dashboard:dashboard, 
             editUserSub:editUserSub, 
             absen:absen, 
-            kalendarSub:kalendarSub, 
-            pengajuanKoreksiSub:pengajuanKoreksiSub, 
-            approvalKoreksiSub:approvalKoreksiSub,
+            kalendarSub:kalendarSub,
             absenModal:absenModal,
             wfhModal:wfhModal,
             shiftModal:shiftModal,
+            absenCheck:absenCheck,
+            adminEvent:adminEvent,
+            perhitunganAbsen:perhitunganAbsen,
+            pengajuanKoreksiSub:pengajuanKoreksiSub, 
+            approvalKoreksiSub:approvalKoreksiSub,
+            approvalAllKoreksiSub:approvalAllKoreksiSub,
             slipGaji:slipGaji,
             pendapatanSub:pendapatanSub,
             pendapatanLainSub:pendapatanLainSub,
             pendapatanAdminSub:pendapatanAdminSub,
-            admin:admin,
-            userSub:userSub,
-            eventSub:eventSub,
-            koreksiAdminSub:koreksiAdminSub,
-            perhitunganNilaiSub:perhitunganNilaiSub,
-            etiket:etiket,
-            pengajuanKendalaSub:pengajuanKendalaSub,
+            employees:employees,
+            dataEmployee:dataEmployee,
+            attribute:attribute,
             setting:setting
         });
 

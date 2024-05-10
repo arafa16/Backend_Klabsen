@@ -1,6 +1,5 @@
 import {Sequelize} from 'sequelize';
 import db from '../config/Database.js';
-import Users from './UsersModel.js';
 
 const {DataTypes} = Sequelize;
 
@@ -37,6 +36,10 @@ const Privilege = db.define('privilege', {
         type: DataTypes.BOOLEAN,
         defaultValue:false
     },
+    approvalAllKoreksiSub:{
+        type: DataTypes.BOOLEAN,
+        defaultValue:false
+    },
     absenModal:{
         type: DataTypes.BOOLEAN,
         defaultValue:false
@@ -46,6 +49,18 @@ const Privilege = db.define('privilege', {
         defaultValue:false
     },
     shiftModal:{
+        type: DataTypes.BOOLEAN,
+        defaultValue:false
+    },
+    absenCheck:{
+        type: DataTypes.BOOLEAN,
+        defaultValue:false
+    },
+    adminEvent:{
+        type: DataTypes.BOOLEAN,
+        defaultValue:false
+    },
+    perhitunganAbsen:{
         type: DataTypes.BOOLEAN,
         defaultValue:false
     },
@@ -65,35 +80,15 @@ const Privilege = db.define('privilege', {
         type: DataTypes.BOOLEAN,
         defaultValue:false
     },
-    admin:{
+    employees:{
         type: DataTypes.BOOLEAN,
         defaultValue:false
     },
-    userSub:{
+    dataEmployee:{
         type: DataTypes.BOOLEAN,
         defaultValue:false
     },
-    eventSub:{
-        type: DataTypes.BOOLEAN,
-        defaultValue:false
-    },
-    koreksiAdminSub:{
-        type: DataTypes.BOOLEAN,
-        defaultValue:false
-    },
-    perhitunganNilaiSub:{
-        type: DataTypes.BOOLEAN,
-        defaultValue:false
-    },
-    etiket:{
-        type: DataTypes.BOOLEAN,
-        defaultValue:false
-    },
-    pengajuanKendalaSub:{
-        type: DataTypes.BOOLEAN,
-        defaultValue:false
-    },
-    perbaikanKendalaSub:{
+    attribute:{
         type: DataTypes.BOOLEAN,
         defaultValue:false
     },

@@ -613,6 +613,10 @@ export const importUsers = async(req, res) => {
 
                 const hasPassword = await argon.hash(data[i].password);
 
+                const newPrivilege = await Privilege.create({
+                    dashboard:'1'
+                });
+
                 const createUser = await Users.create({
                     nik:data[i].nik,
                     absenId:data[i].absenId,
@@ -651,6 +655,7 @@ export const importUsers = async(req, res) => {
                     jamOperasionalGroupId:findJamOperasionalGroup && findJamOperasionalGroup.id,
                     groupId:findGroup && findGroup.id,
                     quote:data[i].quote,
+                    privilegeId:newPrivilege.id,
                     statusId:findStatus && findStatus.id,
                     isActive:data[i].isActive
                 });
