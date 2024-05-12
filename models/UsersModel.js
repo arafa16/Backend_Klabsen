@@ -13,7 +13,7 @@ import Group from './GroupModal.js';
 import Gander from './GanderModal.js';
 import Privilege from './PrivilegeModal.js';
 import JamOperasionalGroup from './JamOperasionalGroupModal.js';
- 
+
 const {DataTypes} = Sequelize;
  
 const Users = db.define('users',{
@@ -216,8 +216,8 @@ const Users = db.define('users',{
     }
 })
 
-Users.hasMany(Users, {as: 'atasan',foreignKey: 'atasanId'});
-Users.belongsTo(Users, {as: 'parent',foreignKey: 'atasanId'});
+Users.hasMany(Users);
+Users.belongsTo(Users, {as: 'atasan', foreignKey: 'atasanId'});
 
 Gander.hasMany(Users);
 Users.belongsTo(Gander, {foreignKey: 'ganderId'});

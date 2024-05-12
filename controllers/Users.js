@@ -14,8 +14,9 @@ import StatusPerkawinan from "../models/StatusPerkawinanModal.js";
 import argon from 'argon2';
 import Privilege from "../models/PrivilegeModal.js";
 import path from 'path';
-import fs from 'fs';
+import fs, { stat } from 'fs';
 import xlsx from 'xlsx';
+import excelJs from 'exceljs';
 import JamOperasionalGroup from "../models/JamOperasionalGroupModal.js";
 
 export const getUsers = async(req, res) => {
@@ -60,11 +61,6 @@ export const getUsers = async(req, res) => {
                 },
                 {
                     model:Group,
-                    attributes:['uuid','name']
-                },
-                {
-                    model:Users,
-                    as: 'atasan',
                     attributes:['uuid','name']
                 },
                 {
@@ -258,8 +254,7 @@ export const getUserById = async(req, res) => {
                 },
                 {
                     model:Users,
-                    as: 'atasan',
-                    attributes:['uuid','name']
+                    as: 'atasan'
                 },
                 {
                     model:Privilege
@@ -312,6 +307,7 @@ export const createUser = async(req, res) => {
             password,
             quote,
             statusId,
+            isAtasan,
             isActive
         } = req.body;
     
@@ -357,6 +353,7 @@ export const createUser = async(req, res) => {
             groupId:groupId,
             quote:quote,
             statusId:statusId,
+            isAtasan:isAtasan,
             isActive:isActive
         });
 
@@ -413,6 +410,7 @@ export const updateUser = async(req, res) => {
         groupId,
         quote,
         statusId,
+        isAtasan,
         isActive,
     } = req.body;
 
@@ -455,6 +453,7 @@ export const updateUser = async(req, res) => {
             groupId:groupId,
             quote:quote,
             statusId:statusId,
+            isAtasan:isAtasan,
             isActive:isActive
         });
 
@@ -670,4 +669,257 @@ export const importUsers = async(req, res) => {
         
         return res.status(201).json({msg: "success"});
     });
+}
+
+export const exportUsers = async(req, res) => {
+    const {status} = req.params;
+
+    try {
+        let workbook = new excelJs.Workbook();
+
+        const sheet = workbook.addWorksheet("data user");
+
+        const findUser = await Users.findAll({
+            attributes:['id','uuid','nik','name','groupId','isActive']
+        });
+
+        sheet.columns= [
+            {header : "No", key:"no", width: 25},
+            {header : "Nama", key:"name", width: 25},
+            {header : "NIK", key:"nik", width: 25},
+        ];
+
+        findUser.map((value, index) =>{
+            sheet.addRow({
+                no:index+1,
+                name:value.name,
+                nik:value.nik,
+            });
+        })
+
+        res.setHeader(
+            "Content-Type",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        );
+
+        res.setHeader(
+            "Content-Disposition",
+            "attachment;filename="+"data_user.xlsx"
+        );
+
+        workbook.xlsx.write(res);
+        
+    } catch (error) {
+        res.status(500).json({msg: error.message});
+    }
+}
+
+export const exportUsersByStatus = async(req, res) => {
+    const {status} = req.params;
+
+    try {
+        let workbook = new excelJs.Workbook();
+
+        const sheet = workbook.addWorksheet("data user");
+        if(status === '0'){
+            const findUser = await Users.findAll({
+                include:[
+                    {
+                        model:Gander
+                    },
+                    {
+                        model:Penempatan
+                    },
+                    {
+                        model:Jabatan
+                    },
+                    {
+                        model:Users,
+                        as: 'atasan'
+                    },
+                    {
+                        model:StatusPerkawinan
+                    },
+                    {
+                        model:Pendidikan
+                    },
+                    {
+                        model:ContactEmergency
+                    },
+                    {
+                        model:GolonganDarah
+                    },
+                    {
+                        model:Bank
+                    },
+                    {
+                        model:JamOperasionalGroup
+                    },
+                    {
+                        model:Group
+                    },
+                    {
+                        model:Status
+                    }
+                ]
+            });
+
+            console.log(findUser, 'findUser');
+    
+            sheet.columns= [
+                {header : "No", key:"no", width: 25},
+                {header : "uuid", key:"uuid", width: 25},
+                {header : "absenId", key:"absenId", width: 25},
+                {header : "nik", key:"nik", width: 25},
+                {header : "name", key:"name", width: 25},
+                {header : "email", key:"email", width: 25},
+                {header : "password", key:"password", width: 25},
+                {header : "gander", key:"gander", width: 25},
+                {header : "extention", key:"extention", width: 25},
+                {header : "nomorHp", key:"nomorHp", width: 25},
+                {header : "penempatan", key:"penempatan", width: 25},
+                {header : "jabatan", key:"jabatan", width: 25},
+                {header : "atasan", key:"atasan", width: 25},
+                {header : "nomorKtp", key:"nomorKtp", width: 25},
+                {header : "alamatKtp", key:"alamatKtp", width: 25},
+                {header : "alamatDomisili", key:"alamatDomisili", width: 25},
+                {header : "tempatLahir", key:"tempatLahir", width: 25},
+                {header : "tanggalLahir", key:"tanggalLahir", width: 25},
+                {header : "nomorNpwp", key:"nomorNpwp", width: 25},
+                {header : "statusPerkawinan", key:"statusPerkawinan", width: 25},
+                {header : "jumlahAnak", key:"jumlahAnak", width: 25},
+                {header : "namaIbu", key:"namaIbu", width: 25},
+                {header : "pendidikan", key:"pendidikan", width: 25},
+                {header : "namaSekolah", key:"namaSekolah", width: 25},
+                {header : "jurusanSekolah", key:"jurusanSekolah", width: 25},
+                {header : "tahunLulus", key:"tahunLulus", width: 25},
+                {header : "ipk", key:"ipk", width: 25},
+                {header : "nomorBpjsKesehatan", key:"nomorBpjsKesehatan", width: 25},
+                {header : "nomorBpjsKetenagakerjaan", key:"nomorBpjsKetenagakerjaan", width: 25},
+                {header : "contactEmergency", key:"contactEmergency", width: 25},
+                {header : "emergencyNumber", key:"emergencyNumber", width: 25},
+                {header : "emergencyAddress", key:"emergencyAddress", width: 25},
+                {header : "nomorSim", key:"nomorSim", width: 25},
+                {header : "golonganDarah", key:"golonganDarah", width: 25},
+                {header : "bank", key:"bank", width: 25},
+                {header : "nomorRekening", key:"nomorRekening", width: 25},
+                {header : "jamOperasionalGroup", key:"jamOperasionalGroup", width: 25},
+                {header : "group", key:"group", width: 25},
+                {header : "quote", key:"quote", width: 25},
+                {header : "status", key:"status", width: 25},
+                {header : "isAtasan", key:"isAtasan", width: 25},
+            ];
+    
+            findUser.map((value, index) =>{
+                sheet.addRow({
+                    no:index+1,
+                    uuid:value.uuid,
+                    absenId:value.absenId,
+                    nik:value.nik,
+                    name:value.name,
+                    email:value.email,
+                    gander:value.gander.name,
+                    extention:value.extention,
+                    nomorHp:value.nomorHp,
+                    penempatan:value.penempatan.name,
+                    jabatan:value.jabatan.name,
+                    atasan:value.atasan && value.atasan.name,
+                    nomorKtp:value.nomorKtp,
+                    alamatKtp:value.alamatKtp,
+                    alamatDomisili:value.alamatDomisili,
+                    tempatLahir:value.tempatLahir,
+                    tanggalLahir:value.tanggalLahir,
+                    nomorNpwp:value.nomorNpwp,
+                    statusPerkawinan:value.status_perkawinan.name,
+                    jumlahAnak:value.jumlahAnak,
+                    namaIbu:value.namaIbu,
+                    pendidikan:value.pendidikan.name,
+                    namaSekolah:value.namaSekolah,
+                    jurusanSekolah:value.jurusanSekolah,
+                    namaSekolah:value.namaSekolah,
+                    tahunLulus:value.tahunLulus,
+                    ipk:value.ipk,
+                    nomorBpjsKesehatan:value.nomorBpjsKesehatan,
+                    nomorBpjsKetenagakerjaan:value.nomorBpjsKetenagakerjaan,
+                    contactEmergency:value.contact_emergency.name,
+                    emergencyNumber:value.emergencyNumber,
+                    emergencyAddress:value.emergencyAddress,
+                    nomorSim:value.nomorSim,
+                    golonganDarah:value.golongan_darah.name,
+                    bank:value.bank.name,
+                    nomorRekening:value.nomorRekening,
+                    jamOperasionalGroup:value.jam_operasional_group.name,
+                    group:value.group.name,
+                    quote:value.quote,
+                    status:value.status.name,
+                    isAtasan:value.isAtasan,
+                });
+            })
+    
+            res.setHeader(
+                "Content-Type",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            );
+    
+            res.setHeader(
+                "Content-Disposition",
+                "attachment;filename="+"data_user.xlsx"
+            );
+    
+            workbook.xlsx.write(res);
+        }
+        else{
+            const findUser = await Users.findAll({
+                include:[
+                    {
+                        model:Status,
+                        where:{
+                            code:status
+                        }
+                    },
+                    {
+                        model:Gander
+                    }
+                ]
+            });
+    
+            sheet.columns= [
+                {header : "No", key:"no", width: 25},
+                {header : "uuid", key:"uuid", width: 25},
+                {header : "absenId", key:"absenId", width: 25},
+                {header : "nik", key:"nik", width: 25},
+                {header : "name", key:"name", width: 25},
+                {header : "email", key:"email", width: 25},
+                {header : "password", key:"password", width: 25},
+                {header : "gander", key:"gander", width: 25},
+            ];
+    
+            findUser.map((value, index) =>{
+                sheet.addRow({
+                    no:index+1,
+                    name:value.uuid,
+                    name:value.absenId,
+                    name:value.nik,
+                    name:value.name,
+                    nik:value.email,
+                    nik:value.gander.name,
+                });
+            })
+    
+            res.setHeader(
+                "Content-Type",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            );
+    
+            res.setHeader(
+                "Content-Disposition",
+                "attachment;filename="+"data_user.xlsx"
+            );
+    
+            workbook.xlsx.write(res);
+        }
+
+    } catch (error) {
+        res.status(500).json({msg: error.message});
+    }
 }

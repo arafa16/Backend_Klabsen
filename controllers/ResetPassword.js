@@ -11,6 +11,7 @@ export const sendEmail = async(req, res) => {
             email:email
         }
     });
+
     if(!findUser) return res.status(404).json({msg: "email not found"});
 
     const secret = process.env.SESS_SECRET;
@@ -22,7 +23,7 @@ export const sendEmail = async(req, res) => {
     const link = `${process.env.LINK_FRONTEND}/resetPassword/${token}`;
 
      // create reusable transporter object using the default SMTP transport
-     const transporter = nodemailer.createTransport({
+    const transporter = nodemailer.createTransport({
         host: process.env.HOST,
         port: process.env.MAIL_PORT,
         auth: {

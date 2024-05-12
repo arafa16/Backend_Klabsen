@@ -54,9 +54,9 @@ const store = new sessionStore({
     db:db
 });
 
-(async()=>{
-    await db.sync();
-})();
+// (async()=>{
+//     await db.sync();
+// })();
 
 app.use(session({
     secret: process.env.SESS_SECRET,
@@ -118,9 +118,9 @@ app.use(express.static("public"));
 store.sync();
 
 // jadwal penarikan data absen
-cron.schedule('*/10 * * * *', function() {
-    getDataMesinAbsenCron();
-});
+// cron.schedule('*/10 * * * *', function() {
+//     getDataMesinAbsenCron();
+// });
 
 app.listen(process.env.PORT,()=>{
     console.log(`server running at port ${process.env.PORT}`)
