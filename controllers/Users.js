@@ -533,12 +533,16 @@ export const importUsers = async(req, res) => {
                     attributes:['id','name']
                 });
 
+                if(!findGander) return res.status(404).json({msg: "gander not found"});
+
                 const findPenempatan = await Penempatan.findOne({
                     where:{
                         name:data[i].penempatan
                     },
                     attributes:['id','name']
                 });
+
+                if(!findPenempatan) return res.status(404).json({msg: "Penempatan not found"});
 
                 const findJabatan = await Jabatan.findOne({
                     where:{
@@ -547,12 +551,16 @@ export const importUsers = async(req, res) => {
                     attributes:['id','name']
                 });
 
+                if(!findJabatan) return res.status(404).json({msg: "findJabatan not found"});
+
                 const findAtasan = await Users.findOne({
                     where:{
                         name:data[i].atasan
                     },
                     attributes:['id','name']
                 })
+
+                if(!findAtasan) return res.status(404).json({msg: "findAtasan not found"});
 
                 const findStatusPerkawinan = await StatusPerkawinan.findOne({
                     where:{
@@ -561,12 +569,18 @@ export const importUsers = async(req, res) => {
                     attributes:['id','name']
                 })
 
+                if(!findStatusPerkawinan) return res.status(404).json({msg: "findStatusPerkawinan not found"});
+
+
                 const findPendidikan = await Pendidikan.findOne({
                     where:{
                         name:data[i].pendidikan
                     },
                     attributes:['id','name']
                 })
+
+                if(!findPendidikan) return res.status(404).json({msg: "findPendidikan not found"});
+
 
                 const findContactEmergency = await ContactEmergency.findOne({
                     where:{
@@ -575,12 +589,17 @@ export const importUsers = async(req, res) => {
                     attributes:['id','name']
                 })
 
+                if(!findContactEmergency) return res.status(404).json({msg: "findContactEmergency not found"});
+
+
                 const findGolonganDarah = await GolonganDarah.findOne({
                     where:{
                         name:data[i].golonganDarah
                     },
                     attributes:['id','name']
                 })
+
+                if(!findGolonganDarah) return res.status(404).json({msg: "findGolonganDarah not found"});
 
                 const findBank = await Bank.findOne({
                     where:{
@@ -589,12 +608,18 @@ export const importUsers = async(req, res) => {
                     attributes:['id','name']
                 })
 
+                if(!findBank) return res.status(404).json({msg: "findBank not found"});
+
+
                 const findJamOperasionalGroup = await JamOperasionalGroup.findOne({
                     where:{
                         name:data[i].jamOperasionalGroup
                     },
                     attributes:['id','name']
                 })
+
+                if(!findJamOperasionalGroup) return res.status(404).json({msg: "findJamOperasionalGroup not found"});
+
 
                 const findGroup = await Group.findOne({
                     where:{
@@ -603,6 +628,9 @@ export const importUsers = async(req, res) => {
                     attributes:['id','name']
                 })
 
+                if(!findGroup) return res.status(404).json({msg: "findGroup not found"});
+
+
                 const findStatus = await Status.findOne({
                     where:{
                         name:data[i].status
@@ -610,6 +638,10 @@ export const importUsers = async(req, res) => {
                     attributes:['id','name']
                 })
 
+                if(!findStatus) return res.status(404).json({msg: "findStatus not found"});
+
+                if(!data[i].password) return res.status(404).json({msg: "password not found"});
+                
                 const hasPassword = await argon.hash(data[i].password);
 
                 const newPrivilege = await Privilege.create({
@@ -671,48 +703,48 @@ export const importUsers = async(req, res) => {
     });
 }
 
-export const exportUsers = async(req, res) => {
-    const {status} = req.params;
+// export const exportUsers = async(req, res) => {
+//     const {status} = req.params;
 
-    try {
-        let workbook = new excelJs.Workbook();
+//     try {
+//         let workbook = new excelJs.Workbook();
 
-        const sheet = workbook.addWorksheet("data user");
+//         const sheet = workbook.addWorksheet("data user");
 
-        const findUser = await Users.findAll({
-            attributes:['id','uuid','nik','name','groupId','isActive']
-        });
+//         const findUser = await Users.findAll({
+//             attributes:['id','uuid','nik','name','groupId','isActive']
+//         });
 
-        sheet.columns= [
-            {header : "No", key:"no", width: 25},
-            {header : "Nama", key:"name", width: 25},
-            {header : "NIK", key:"nik", width: 25},
-        ];
+//         sheet.columns= [
+//             {header : "No", key:"no", width: 25},
+//             {header : "Nama", key:"name", width: 25},
+//             {header : "NIK", key:"nik", width: 25},
+//         ];
 
-        findUser.map((value, index) =>{
-            sheet.addRow({
-                no:index+1,
-                name:value.name,
-                nik:value.nik,
-            });
-        })
+//         findUser.map((value, index) =>{
+//             sheet.addRow({
+//                 no:index+1,
+//                 name:value.name,
+//                 nik:value.nik,
+//             });
+//         })
 
-        res.setHeader(
-            "Content-Type",
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        );
+//         res.setHeader(
+//             "Content-Type",
+//             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+//         );
 
-        res.setHeader(
-            "Content-Disposition",
-            "attachment;filename="+"data_user.xlsx"
-        );
+//         res.setHeader(
+//             "Content-Disposition",
+//             "attachment;filename="+"data_user.xlsx"
+//         );
 
-        workbook.xlsx.write(res);
+//         workbook.xlsx.write(res);
         
-    } catch (error) {
-        res.status(500).json({msg: error.message});
-    }
-}
+//     } catch (error) {
+//         res.status(500).json({msg: error.message});
+//     }
+// }
 
 export const exportUsersByStatus = async(req, res) => {
     const {status} = req.params;
