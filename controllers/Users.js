@@ -645,7 +645,13 @@ export const importUsers = async(req, res) => {
                 const hasPassword = await argon.hash(data[i].password);
 
                 const newPrivilege = await Privilege.create({
-                    dashboard:'1'
+                    dashboard:'1',
+                    absen:'1', 
+                    kalendarSub:'1',
+                    pengajuanKoreksiSub:'1',
+                    slipGaji:'1',
+                    pendapatanSub:'1',
+                    pendapatanLainSub:'1'
                 });
 
                 const createUser = await Users.create({

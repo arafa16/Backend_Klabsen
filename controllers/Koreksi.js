@@ -313,29 +313,31 @@ export const getKoreksiById = async(req, res) => {
                 uuid:req.params.id
             },
             attributes:['uuid','keterangan'],
-            include:[{
-                model:Users,
-                attributes:['uuid','name','absenId'],
-                include:{
+            include:[
+                {
                     model:Users,
-                    as: 'atasan',
-                    attributes:['uuid','name']
-                }
-            },{
-                model:InOut,
-                attributes:['uuid','tanggalMulai','tanggalSelesai'],
-                include:[{
-                    model:TipeAbsen,
-                    attributes:['uuid','name','code']
-                },{
-                    model:Pelanggaran,
-                    attributes:['uuid','name','code']
+                    attributes:['uuid','name','absenId'],
+                    include:{
+                        model:Users,
+                        as: 'atasan',
+                        attributes:['uuid','name']
+                    }
                 },
                 {
-                    model:StatusInout,
-                    attributes:['uuid','name','code']
-                }
-            ]
+                    model:InOut,
+                    attributes:['uuid','tanggalMulai','tanggalSelesai'],
+                    include:[{
+                        model:TipeAbsen,
+                        attributes:['uuid','name','code']
+                    },{
+                        model:Pelanggaran,
+                        attributes:['uuid','name','code']
+                    },
+                    {
+                        model:StatusInout,
+                        attributes:['uuid','name','code']
+                    }
+                ]
             },{
                 model:StatusKoreksi,
                 attributes:['uuid','name','code']
