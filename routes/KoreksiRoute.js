@@ -10,14 +10,15 @@ import {
     approveKoreksi,
     getKoreksiByApprover,
     getKoreksiByUser,
-    createKoreksiByDate
+    createKoreksiByDate,
+    getKoreksiTable
 } from '../controllers/Koreksi.js';
 
 const route = express.Router();
 
 route.get('/koreksis/:limit&:page&:id&:statusCode/approver', getKoreksiTableByApprover);
 route.get('/koreksis/:limit&:page&:id&:statusCode', getKoreksiTableByUser);
-route.get('/koreksis/:limit&:page', getKoreksi);
+route.get('/koreksis/:limit&:page', getKoreksiTable);
 route.get('/koreksis/:id/approver', getKoreksiByApprover);
 route.get('/koreksis/:id/user', getKoreksiByUser);
 route.get('/koreksis/:id', getKoreksiById);

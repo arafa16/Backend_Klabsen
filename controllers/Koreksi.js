@@ -53,7 +53,7 @@ export const getKoreksiTable = async(req, res) => {
                 },
                 {
                     model:InOut,
-                    attributes:['uuid','tanggalMasuk','tanggalPulang']
+                    attributes:['uuid','tanggalMulai','tanggalSelesai']
                 },
                 {
                     model:StatusKoreksi,
