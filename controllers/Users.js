@@ -651,7 +651,7 @@ export const importUsers = async(req, res) => {
                     pengajuanKoreksiSub:'1',
                     slipGaji:'1',
                     pendapatanSub:'1',
-                    pendapatanLainSub:'1'
+                    pendapatanLainSub:'0'
                 });
 
                 const createUser = await Users.create({
