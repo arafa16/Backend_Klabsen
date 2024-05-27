@@ -1,3 +1,4 @@
 .env
 node_modules
-public/importFile/*.xlsx
+/public/importFile/
+/public/photos/
