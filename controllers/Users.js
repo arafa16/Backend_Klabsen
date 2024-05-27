@@ -418,14 +418,14 @@ export const updateUser = async(req, res) => {
         findUser.update({
             nik:nik,
             absenId:absenId,
-            name:name, 
+            name:name,
             ganderId:ganderId, 
             email:email,
             extention:extention,
             nomorHp:nomorHp,
             penempatanId:penempatanId,
             jabatanId:jabatanId,
-            atasanId:atasanId,
+            atasanId:atasanId === '' ? null : atasanId,
             nomorKtp:nomorKtp,
             alamatKtp:alamatKtp,
             alamatDomisili:alamatDomisili,
@@ -553,9 +553,11 @@ export const importUsers = async(req, res) => {
 
                 if(!findJabatan) return res.status(404).json({msg: "findJabatan not found"});
 
+                console.log('sampai find atasan');
+
                 const findAtasan = await Users.findOne({
                     where:{
-                        name:data[i].atasan
+                        name:data[i] && data[i].atasan
                     },
                     attributes:['id','name']
                 })

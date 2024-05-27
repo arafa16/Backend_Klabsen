@@ -2,7 +2,7 @@ import Bank from "../models/BankModal.js";
 
 export const getBanks = async(req, res) => {
     try {
-        const response = await Bank.findAll();
+        const response = await Banks.findOne();
 
         return res.status(200).json(response);
     } catch (error) {
