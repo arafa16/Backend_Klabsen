@@ -1,4 +1,4 @@
 .env
 node_modules
-/public/importFile/
-/public/photos/
+/public/importFile/*
+/public/photos/*
