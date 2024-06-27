@@ -4,6 +4,7 @@ import path from "path";
 import crypto from 'crypto';
 
 export const uploadPhoto = async(req, res) => {
+    
     const findUser = await Users.findOne({
         where:{
             uuid:req.params.id

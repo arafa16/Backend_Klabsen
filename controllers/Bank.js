@@ -1,8 +1,9 @@
+import { where } from "sequelize";
 import Bank from "../models/BankModal.js";
 
 export const getBanks = async(req, res) => {
     try {
-        const response = await Banks.findOne();
+        const response = await Bank.findAll();
 
         return res.status(200).json(response);
     } catch (error) {
