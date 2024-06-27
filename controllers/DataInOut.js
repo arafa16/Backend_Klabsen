@@ -7,6 +7,8 @@ import TipeAbsen from "../models/TipeAbsenModal.js";
 import { where } from "sequelize";
 
 export const importInOut = async(req, res) => {
+    const uuid = req.params.uuid;
+
     if(req.files === null) return res.status(401).json({msg: "No file Upload"});
 
     const {file} = req.files;
@@ -30,7 +32,7 @@ export const importInOut = async(req, res) => {
 
                 const user = await Users.findOne({
                     where:{
-                        absenId:data[i].absenId
+                        uuid:uuid
                     },
                     attributes:['id']
                 });
