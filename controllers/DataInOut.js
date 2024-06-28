@@ -49,7 +49,7 @@ export const importInOut = async(req, res) => {
                     tanggalSelesai:tanggalSelesai,
                     tipeAbsenId:tipeAbsen.id,
                     pelanggaranId:data[i].pelanggaranId,
-                    statusInoutId:data[i].statusInoutId,
+                    statusInoutId:data[i].statusInOutId,
                     jamOperasionalId:data[i].jamOperasionalId,
                 });
 
