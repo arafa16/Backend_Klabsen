@@ -49,7 +49,8 @@ export const importInOut = async(req, res) => {
                     tanggalSelesai:tanggalSelesai,
                     tipeAbsenId:tipeAbsen.id,
                     pelanggaranId:data[i].pelanggaranId,
-                    statusInoutId:data[i].tatusInoutId
+                    statusInoutId:data[i].statusInoutId,
+                    jamOperasionalId:data[i].jamOperasionalId,
                 });
 
                 dataSubmit.push(response);
