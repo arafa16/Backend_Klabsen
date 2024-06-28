@@ -67,6 +67,9 @@ export const getUsers = async(req, res) => {
                     model:Status,
                     attributes:['uuid','name','code']
                 }
+            ],
+            order: [
+                ['name', 'ASC']
             ]
         });
 
@@ -136,6 +139,9 @@ export const getUsersTable = async(req, res) => {
                         },
                         attributes:['uuid','name','code']
                     }
+                ],
+                order: [
+                    ['name', 'ASC']
                 ]
             });
 
