@@ -14,10 +14,11 @@ import StatusPerkawinan from "../models/StatusPerkawinanModal.js";
 import argon from 'argon2';
 import Privilege from "../models/PrivilegeModal.js";
 import path from 'path';
-import fs, { stat } from 'fs';
+import fs from 'fs';
 import xlsx from 'xlsx';
 import excelJs from 'exceljs';
 import JamOperasionalGroup from "../models/JamOperasionalGroupModal.js";
+import { Op } from "sequelize";
 
 export const getUsers = async(req, res) => {
     try {
@@ -74,6 +75,148 @@ export const getUsers = async(req, res) => {
         });
 
         res.status(200).json(response);
+    } catch (error) {
+        res.status(500).json({msg: error});
+    }
+}
+
+export const getUsersTableSearch = async(req, res) => {
+    const limit = parseInt(req.params.limit);
+    const page = parseInt(req.params.page);
+    const statusCode = parseInt(req.params.statusCode);
+    const search = req.params.search;
+
+    const offset = (page - 1) * limit;
+
+    try {
+        if(statusCode !== 0){
+            const response = await Users.findAndCountAll({
+                limit:limit,
+                offset:offset,
+                where:{
+                    name:{
+                        [Op.like]: `%${search}%`
+                    }
+                },
+                include:[
+                    {
+                        model:Gander,
+                        attributes:['uuid','name']
+                    },
+                    {
+                        model:Pendidikan,
+                        attributes:['uuid','name']
+                    },
+                    {
+                        model:Penempatan,
+                        attributes:['uuid','name']
+                    },
+                    {
+                        model:Jabatan,
+                        attributes:['uuid','name']
+                    },
+                    {
+                        model:StatusPerkawinan,
+                        attributes:['uuid','name']
+                    },
+                    {
+                        model:ContactEmergency,
+                        attributes:['uuid','name']
+                    },
+                    {
+                        model:Bank,
+                        attributes:['uuid','name']
+                    },
+                    {
+                        model:GolonganDarah,
+                        attributes:['uuid','name']
+                    },
+                    {
+                        model:JamOperasionalGroup,
+                        attributes:['uuid','name','keterangan','code','isActive']
+                    },
+                    {
+                        model:Group,
+                        attributes:['uuid','name']
+                    },
+                    {
+                        model:Status,
+                        where:{
+                            code:statusCode
+                        },
+                        attributes:['uuid','name','code']
+                    }
+                ],
+                order: [
+                    ['name', 'ASC']
+                ]
+            });
+
+            res.status(200).json(response);
+        }
+        else{
+            const response = await Users.findAndCountAll({
+                limit:limit,
+                offset:offset,
+                where:{
+                    name:{
+                        [Op.like]: `%${search}%`
+                    }
+                },
+                include:[
+                    {
+                        model:Gander,
+                        attributes:['uuid','name']
+                    },
+                    {
+                        model:Pendidikan,
+                        attributes:['uuid','name']
+                    },
+                    {
+                        model:Penempatan,
+                        attributes:['uuid','name']
+                    },
+                    {
+                        model:Jabatan,
+                        attributes:['uuid','name']
+                    },
+                    {
+                        model:StatusPerkawinan,
+                        attributes:['uuid','name']
+                    },
+                    {
+                        model:ContactEmergency,
+                        attributes:['uuid','name']
+                    },
+                    {
+                        model:Bank,
+                        attributes:['uuid','name']
+                    },
+                    {
+                        model:GolonganDarah,
+                        attributes:['uuid','name']
+                    },
+                    {
+                        model:JamOperasionalGroup,
+                        attributes:['uuid','name','keterangan','code','isActive']
+                    },
+                    {
+                        model:Group,
+                        attributes:['uuid','name']
+                    },
+                    {
+                        model:Status,
+                        attributes:['uuid','name']
+                    }
+                ],
+                order: [
+                    ['name', 'ASC']
+                ]
+            });
+    
+            res.status(200).json(response);
+        }
+        
     } catch (error) {
         res.status(500).json({msg: error});
     }
