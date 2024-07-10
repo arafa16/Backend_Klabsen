@@ -616,15 +616,21 @@ export const updateUser = async(req, res) => {
 }
 
 export const changePassword = async(req, res) => {
+    const { password } = req.body;
+
     const findUser = await Users.findOne({
         where:{
             uuid:req.params.id
         }
     });
 
+    console.log(password, 'password');
+
     if(!findUser) return res.status(404).json({msg: "not found"});
 
-    const { password } = req.body;
+    if(password === 'password'){
+        return res.status(403).json({msg: "password not recomand"});
+    }
 
     const hasPassword = await argon.hash(password);
 
