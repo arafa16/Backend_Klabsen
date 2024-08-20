@@ -462,6 +462,58 @@ export const createUser = async(req, res) => {
             isAtasan,
             isActive
         } = req.body;
+
+    if(absenId === null || absenId === ''){
+        return res.status(404).json({msg: "absen can't be null"})
+    }
+
+    if(password === null || password === ''){
+        return res.status(404).json({msg: "password can't be null"})
+    }
+
+    if(ganderId === null || ganderId === ''){
+        return res.status(404).json({msg: "gander can't be null"})
+    }
+
+    if(penempatanId === null || penempatanId === ''){
+        return res.status(404).json({msg: "penempatan can't be null"})
+    }
+
+    if(jabatanId === null || jabatanId === ''){
+        return res.status(404).json({msg: "jabatan can't be null"})
+    }
+
+    if(atasanId === null || atasanId === ''){
+        return res.status(404).json({msg: "atasan can't be null"})
+    }
+
+    if(statusPerkawinanId === null || statusPerkawinanId === ''){
+        return res.status(404).json({msg: "status perkawinan can't be null"})
+    }
+
+    if(pendidikanId === null || pendidikanId === ''){
+        return res.status(404).json({msg: "pendidikan can't be null"})
+    }
+
+    if(kontakEmergencyId === null || kontakEmergencyId === ''){
+        return res.status(404).json({msg: "kontak emergency can't be null"})
+    }
+
+    if(golonganDarahId === null || golonganDarahId === ''){
+        return res.status(404).json({msg: "golongan darah can't be null"})
+    }
+
+    if(jamOperasionalGroupId === null || jamOperasionalGroupId === ''){
+        return res.status(404).json({msg: "jam operasional group can't be null"})
+    }
+
+    if(groupId === null || groupId === ''){
+        return res.status(404).json({msg: "group can't be null"})
+    }
+
+    if(statusId === null || statusId === ''){
+        return res.status(404).json({msg: "status can't be null"})
+    }
     
     const hasPassword = await argon.hash(password);
 
@@ -565,6 +617,54 @@ export const updateUser = async(req, res) => {
         isAtasan,
         isActive,
     } = req.body;
+
+    if(absenId === null || absenId === ''){
+        return res.status(404).json({msg: "absen can't be null"})
+    }
+
+    if(ganderId === null || ganderId === ''){
+        return res.status(404).json({msg: "gander can't be null"})
+    }
+
+    if(penempatanId === null || penempatanId === ''){
+        return res.status(404).json({msg: "penempatan can't be null"})
+    }
+
+    if(jabatanId === null || jabatanId === ''){
+        return res.status(404).json({msg: "jabatan can't be null"})
+    }
+
+    if(atasanId === null || atasanId === ''){
+        return res.status(404).json({msg: "atasan can't be null"})
+    }
+
+    if(statusPerkawinanId === null || statusPerkawinanId === ''){
+        return res.status(404).json({msg: "status perkawinan can't be null"})
+    }
+
+    if(pendidikanId === null || pendidikanId === ''){
+        return res.status(404).json({msg: "pendidikan can't be null"})
+    }
+
+    if(kontakEmergencyId === null || kontakEmergencyId === ''){
+        return res.status(404).json({msg: "kontak emergency can't be null"})
+    }
+
+    if(golonganDarahId === null || golonganDarahId === ''){
+        return res.status(404).json({msg: "golongan darah can't be null"})
+    }
+
+    if(jamOperasionalGroupId === null || jamOperasionalGroupId === ''){
+        return res.status(404).json({msg: "jam operasional group can't be null"})
+    }
+
+    if(groupId === null || groupId === ''){
+        return res.status(404).json({msg: "group can't be null"})
+    }
+
+    if(statusId === null || statusId === ''){
+        return res.status(404).json({msg: "status can't be null"})
+    }
 
     try {
         findUser.update({

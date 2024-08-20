@@ -216,7 +216,7 @@ const Users = db.define('users',{
     }
 })
 
-Users.hasMany(Users);
+// Users.hasMany(Users);
 Users.belongsTo(Users, {as: 'atasan', foreignKey: 'atasanId'});
 
 Gander.hasMany(Users);

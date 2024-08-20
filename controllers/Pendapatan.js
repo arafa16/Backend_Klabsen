@@ -477,8 +477,6 @@ export const importPendapatans = async(req, res) => {
         let workbook = xlsx.readFile(`./public/importFile/${fileName}`);
         let sheetNames = workbook.SheetNames[0];
         let data = xlsx.utils.sheet_to_json(workbook.Sheets[sheetNames]);
-
-        console.log(data);
         
         try {
             for(let i = 0; i < data.length; i++){
@@ -491,8 +489,6 @@ export const importPendapatans = async(req, res) => {
 
                 const date = moment(data[i].periode).format("YYYY-MM-DD");
                 const initialDate = moment(data[i].periode).format("MMMM YYYY");
-
-                console.log(initialDate, 'initial date');
 
                 await Pendapatan.create({
                     tipePendapatanId:data[i].tipePendapatanId, 

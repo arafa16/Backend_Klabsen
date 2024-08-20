@@ -8,9 +8,21 @@ export const Login = async(req, res) =>{
     const user = await Users.findOne({
         where:{
             email: req.body.email
-        }
+        },
+        include:[
+            {
+                model:Status,
+                attributes:['uuid','name','code']
+            },
+            {
+                model:Privilege
+            }
+        ]
     });
+
     if(!user) return res.status(404).json({msg: "user not found"});
+
+    if(user.status.code !== '2') return res.status(404).json({msg: "user not active "});
 
     const match = await argon.verify(user.password, req.body.password);
     if(!match) return res.status(401).json({msg: "password salah"});
@@ -132,6 +144,7 @@ export const getMe = async(req, res) => {
             'image',
             'url_image',
             'email',
+            'jamOperasionalGroupId',
             'isActive'
         ],
         include:[

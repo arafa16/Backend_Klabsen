@@ -84,7 +84,9 @@ export const updateStatus = async(req, res) => {
 
 export const deleteStatus = async(req, res) => {
     const response = await StatusPerkawinan.findOne({
-        uuid:req.params.id
+        where:{
+            uuid:req.params.id
+        }
     });
 
     if(!response) return res.status(404).json({msg: "not found"});

@@ -570,7 +570,7 @@ export const approveKoreksi = async(req, res) => {
             statusKoreksiId:statusKoreksi && statusKoreksi.id
         });
 
-        return res.status(201).json({msg: "action change success"})
+        return res.status(201).json({msg: "success"})
     } catch (error) {
         return res.status(500).json({msg: error.message});
     }

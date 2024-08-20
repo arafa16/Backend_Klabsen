@@ -23,7 +23,7 @@ export const getPeriodeTable = async(req, res) => {
             limit:limit,
             offset:offset,
             order: [
-                ['code', 'DESC']
+                ['tanggalMulai', 'DESC']
             ]
         });
 

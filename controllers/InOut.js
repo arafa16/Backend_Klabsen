@@ -683,7 +683,7 @@ export const createInOutByAbsenWeb = async(req, res) => {
 
 // update absen
 export const updateInOut = async(req, res) => {
-    const {tanggalMulai, tanggalSelesai, tipeAbsenId, pelanggaranId, statusInoutId, isAbsenWeb} = req.body;
+    const {tanggalMulai, tanggalSelesai, tipeAbsenId, pelanggaranId, statusInoutId, jamOperasionalId, isAbsenWeb} = req.body;
     const response = await InOut.findOne({
         where:{
             uuid:req.params.id
@@ -708,7 +708,13 @@ export const updateInOut = async(req, res) => {
         where:{
             uuid:statusInoutId
         }
-    })
+    });
+
+    const jamOperasional = await JamOperasional.findOne({
+        where:{
+            uuid:jamOperasionalId
+        }
+    });
 
     try {
         response.update({
@@ -717,6 +723,7 @@ export const updateInOut = async(req, res) => {
             tipeAbsenId:tipeAbsen && tipeAbsen.id,
             pelanggaranId:pelanggaran && pelanggaran.id,
             statusInoutId:statusInout && statusInout.id,
+            jamOperasionalId:jamOperasional && jamOperasional.id,
             isAbsenWeb:isAbsenWeb
         });
 

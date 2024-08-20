@@ -20,7 +20,9 @@ export const getPerhitunganByGroupPeriode = async(req, res) => {
         }
     });
 
-    if(!findPeriode) return res.status(404).json({msg: "periode not found"});
+    if(!findPeriode) return res.status(403).json({msg: "periode not found"});
+
+    const jumlahHari = parseInt(findPeriode.jumlahHari);
 
     const findGroup = await Group.findOne({
         where:{
@@ -28,7 +30,7 @@ export const getPerhitunganByGroupPeriode = async(req, res) => {
         }
     })
 
-    if(!findGroup) return res.status(404).json({msg: "group not found"});
+    if(!findGroup) return res.status(403).json({msg: "group not found"});
 
     try {
         const startDate = date.format(new Date(findPeriode.tanggalMulai), 'YYYY-MM-DD HH:mm:ss');
@@ -37,7 +39,8 @@ export const getPerhitunganByGroupPeriode = async(req, res) => {
         const findUser = await Users.findAll({
             where:{
                 groupId:findGroup.id,
-                isActive:true
+                isActive:true,
+                statusId:2
             },
             attributes:['id','uuid','nik','name','groupId','isActive']
         });
@@ -56,7 +59,10 @@ export const getPerhitunganByGroupPeriode = async(req, res) => {
                     dataOut:0,
                     dataOutPelanggaran:0,
                     dataOutNormal:0,
+                    dataCuti:0,
+                    dataSakit:0,
                     dataTidakAbsen:0,
+                    jumlahHari:0,
                 }
             );
 
@@ -87,10 +93,13 @@ export const getPerhitunganByGroupPeriode = async(req, res) => {
                 ]
             })
 
-            console.log(getDataInOut, 'data in out');
-
             for(const dataInOut in getDataInOut){
-                if(getDataInOut[dataInOut].tipe_absen.code === '0'){
+                if(
+                    getDataInOut[dataInOut].tipe_absen.code === '0' 
+                    || getDataInOut[dataInOut].tipe_absen.code === '4' 
+                    || getDataInOut[dataInOut].tipe_absen.code === '8'
+                    || getDataInOut[dataInOut].tipe_absen.code === '11'
+                ){
                     dataPerhitungan[data].dataIn = dataPerhitungan[data].dataIn + 1;
                     if(getDataInOut[dataInOut].pelanggaran.code === '2'){
                         dataPerhitungan[data].dataInPelanggaran = dataPerhitungan[data].dataInPelanggaran + 1;
@@ -99,7 +108,12 @@ export const getPerhitunganByGroupPeriode = async(req, res) => {
                         dataPerhitungan[data].dataInNormal = dataPerhitungan[data].dataInNormal + 1;
                     }
                 }
-                else if(getDataInOut[dataInOut].tipe_absen.code === '1'){
+                else if(
+                    getDataInOut[dataInOut].tipe_absen.code === '1'
+                    ||getDataInOut[dataInOut].tipe_absen.code === '5'
+                    ||getDataInOut[dataInOut].tipe_absen.code === '9'
+                    ||getDataInOut[dataInOut].tipe_absen.code === '12'
+                ){
                     dataPerhitungan[data].dataOut = dataPerhitungan[data].dataOut + 1;
                     if(getDataInOut[dataInOut].pelanggaran.code === '2'){
                         dataPerhitungan[data].dataOutPelanggaran = dataPerhitungan[data].dataOutPelanggaran + 1;
@@ -108,16 +122,31 @@ export const getPerhitunganByGroupPeriode = async(req, res) => {
                         dataPerhitungan[data].dataOutNormal = dataPerhitungan[data].dataOutNormal + 1;
                     }
                 }
+                else if(
+                    getDataInOut[dataInOut].tipe_absen.code === '13'
+                ){
+                    dataPerhitungan[data].dataCuti = dataPerhitungan[data].dataCuti + 1;
+                }
+                else if(
+                    getDataInOut[dataInOut].tipe_absen.code === '14'
+                ){
+                    dataPerhitungan[data].dataSakit = dataPerhitungan[data].dataSakit + 1;
+                }
                 else{
                     dataPerhitungan[data].dataTidakAbsen = dataPerhitungan[data].dataTidakAbsen + 1;
                 }
             }
-            
+
+            dataPerhitungan[data].jumlahHari = jumlahHari;
+
+            const tidakAbsen = jumlahHari - (((dataPerhitungan[data].dataIn + dataPerhitungan[data].dataOut)/2) + dataPerhitungan[data].dataCuti + dataPerhitungan[data].dataSakit);
+
+            if(tidakAbsen < 0){
+                dataPerhitungan[data].dataTidakAbsen = dataPerhitungan[data].dataTidakAbsen + 0;
+            }else{
+                dataPerhitungan[data].dataTidakAbsen = dataPerhitungan[data].dataTidakAbsen + tidakAbsen;
+            }
         }
-
-        // for(const data in dataPerhitungan){
-
-        // }
 
         return res.status(200).json(dataPerhitungan);
     } catch (error) {
@@ -176,6 +205,8 @@ export const exportPerhitunganByGroupPeriode = async(req, res) => {
                     dataOut:0,
                     dataOutPelanggaran:0,
                     dataOutNormal:0,
+                    dataCuti:0,
+                    dataSakit:0,
                     dataTidakAbsen:0,
                 }
             );
@@ -210,7 +241,11 @@ export const exportPerhitunganByGroupPeriode = async(req, res) => {
             console.log(getDataInOut, 'data in out');
 
             for(const dataInOut in getDataInOut){
-                if(getDataInOut[dataInOut].tipe_absen.code === '0'){
+                if(
+                    getDataInOut[dataInOut].tipe_absen.code === '0' 
+                    || getDataInOut[dataInOut].tipe_absen.code === '4' 
+                    || getDataInOut[dataInOut].tipe_absen.code === '8'
+                ){
                     dataPerhitungan[data].dataIn = dataPerhitungan[data].dataIn + 1;
                     if(getDataInOut[dataInOut].pelanggaran.code === '2'){
                         dataPerhitungan[data].dataInPelanggaran = dataPerhitungan[data].dataInPelanggaran + 1;
@@ -219,7 +254,11 @@ export const exportPerhitunganByGroupPeriode = async(req, res) => {
                         dataPerhitungan[data].dataInNormal = dataPerhitungan[data].dataInNormal + 1;
                     }
                 }
-                else if(getDataInOut[dataInOut].tipe_absen.code === '1'){
+                else if(
+                    getDataInOut[dataInOut].tipe_absen.code === '1'
+                    ||getDataInOut[dataInOut].tipe_absen.code === '5'
+                    ||getDataInOut[dataInOut].tipe_absen.code === '9'
+                ){
                     dataPerhitungan[data].dataOut = dataPerhitungan[data].dataOut + 1;
                     if(getDataInOut[dataInOut].pelanggaran.code === '2'){
                         dataPerhitungan[data].dataOutPelanggaran = dataPerhitungan[data].dataOutPelanggaran + 1;
@@ -227,6 +266,16 @@ export const exportPerhitunganByGroupPeriode = async(req, res) => {
                     else{
                         dataPerhitungan[data].dataOutNormal = dataPerhitungan[data].dataOutNormal + 1;
                     }
+                }
+                else if(
+                    getDataInOut[dataInOut].tipe_absen.code === '13'
+                ){
+                    dataPerhitungan[data].dataCuti = dataPerhitungan[data].dataCuti + 1;
+                }
+                else if(
+                    getDataInOut[dataInOut].tipe_absen.code === '14'
+                ){
+                    dataPerhitungan[data].dataSakit = dataPerhitungan[data].dataSakit + 1;
                 }
                 else{
                     dataPerhitungan[data].dataTidakAbsen = dataPerhitungan[data].dataTidakAbsen + 1;
@@ -245,6 +294,8 @@ export const exportPerhitunganByGroupPeriode = async(req, res) => {
             {header : "Pulang", key:"pulang", width: 25},
             {header : "Pulang Normal", key:"pulangN", width: 25},
             {header : "Pulang Melanggar", key:"pulangP", width: 25},
+            {header : "Cuti", key:"cuti", width: 25},
+            {header : "Sakit", key:"sakit", width: 25},
             {header : "Tidak Absen", key:"tidakAbsen", width: 25},
             {header : "Total Pelanggaran", key:"totalP", width: 25},
             {header : "Point Pelanggaran", key:"pointP", width: 25},
@@ -258,9 +309,11 @@ export const exportPerhitunganByGroupPeriode = async(req, res) => {
                 masuk:value.dataIn,
                 masunN:value.dataInNormal,
                 masukP:value.dataInPelanggaran,
-                pulang:value.dataOut, 
+                pulang:value.dataOut,
                 pulangN:value.dataOutNormal,
                 pulangP:value.dataOutPelanggaran,
+                cuti:value.cuti,
+                sakit:value.sakit,
                 tidakAbsen:value.dataTidakAbsen,
                 totalP:(value.dataInPelanggaran + value.dataOutPelanggaran + value.dataTidakAbsen),
                 pointP:((value.dataInPelanggaran + value.dataOutPelanggaran + value.dataTidakAbsen)*0.005),
