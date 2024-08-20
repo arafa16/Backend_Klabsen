@@ -77,8 +77,10 @@ export const resetPassword = async(req, res) => {
     const {password, confPassword} = req.body;
     const secret = process.env.SESS_SECRET;
 
-    if(password !== confPassword) return res.status(400).json({msg: "password dosn't match"});
-
+    if(password !== confPassword){
+        return res.status(400).json({msg: "password dosn't match"});
+    }
+    
     try {
         const verify = jwt.verify(token, secret);
 
@@ -87,8 +89,6 @@ export const resetPassword = async(req, res) => {
                 uuid: verify.id
             }
         });
-
-        console.log(findUser);
 
         if(!findUser) return res.status(404).json({msg: "user not found"});
 
