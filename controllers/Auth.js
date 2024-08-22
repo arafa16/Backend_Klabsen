@@ -119,7 +119,7 @@ export const register = async(req, res) => {
             quote:quote
         });
 
-        return res.status(201).json({msg: "success"});
+        return res.status(201).json({msg: "success, please contact hcm to verifycation"});
     } catch (error) {
         console.log(error);
         return res.status(500).json({msg: error.message});
