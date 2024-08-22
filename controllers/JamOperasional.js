@@ -29,6 +29,9 @@ export const getJamOperasionalsTable = async(req, res) => {
                 {
                     model:JamOperasionalGroup
                 }
+            ],
+            order: [
+                ['code', 'ASC']
             ]
         });
 
