@@ -45,7 +45,7 @@ export const getPeriodeTableStatus = async(req, res) => {
             limit:limit,
             offset:offset,
             order: [
-                ['code', 'DESC']
+                ['tanggalMulai', 'DESC']
             ],
             where:{
                 isActive:isActive
