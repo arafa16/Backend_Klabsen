@@ -78,6 +78,12 @@ export const register = async(req, res) => {
     
     const hasPassword = await argon.hash(password);
 
+    const status = await Status.findOne({
+        where:{
+            code:'1'
+        }
+    });
+
     try {
         await Users.create({
             nik:nik,
@@ -116,7 +122,8 @@ export const register = async(req, res) => {
             nomorRekening:nomorRekening,
             jamOperasionalId:jamOperasionalId,
             groupId:groupId,
-            quote:quote
+            quote:quote,
+            statusId:status.id
         });
 
         return res.status(201).json({msg: "success, please contact hcm to verifycation"});

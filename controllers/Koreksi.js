@@ -565,10 +565,37 @@ export const approveKoreksi = async(req, res) => {
 
     if(!statusKoreksi) return res.status(404).json({msg: "status koreksi not found"});
 
+    const inOut = await InOut.findOne({
+        where:{
+            id:response.inOutId
+        }
+    });
+
+    if(!inOut) return res.status(404).json({msg: "in out not found"});
+
     try {
         response.update({
             statusKoreksiId:statusKoreksi && statusKoreksi.id
         });
+
+        if(statusKoreksiId === 2){
+            await inOut.update({
+                pelanggaranId:1,
+                statusInoutId:4,
+            })
+        }
+        else if (statusKoreksiId === 3){
+            await inOut.update({
+                pelanggaranId:2,
+                statusInoutId:3,
+            })
+        }
+        else{
+            await inOut.update({
+                pelanggaranId:2,
+                statusInoutId:2,
+            })
+        }
 
         return res.status(201).json({msg: "success"})
     } catch (error) {
