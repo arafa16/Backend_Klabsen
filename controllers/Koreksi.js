@@ -8,6 +8,7 @@ import Pelanggaran from "../models/PelanggaranModal.js";
 import Status from "../models/StatusModel.js";
 import StatusInout from "../models/StatusInoutModal.js";
 import JamOperasional from "../models/JamOperasionalModal.js";
+import nodemailer from 'nodemailer';
 
 export const getKoreksi = async(req, res) => {
     try {
@@ -413,7 +414,13 @@ export const createKoreksiByDate = async(req, res) => {
     const user = await Users.findOne({
         where:{
             uuid:userId
-        }
+        },
+        include:[
+            {
+                model:Users,
+                as: 'atasan'
+            },
+        ]
     });
 
     if(!user) return res.status(404).json({msg: "user not found"});
@@ -469,6 +476,14 @@ export const createKoreksiByDate = async(req, res) => {
 
     if(!jamOperasional) return res.status(404).json({msg: "jam operasional not found"});
 
+    const msg = {
+        from: '"Support IT Kopkarla" <no-replay@kopkarla.co.id>',
+        to: user.atasan.email,
+        subject: "Koreksi Absen",
+        text: 
+        `${user.name} membuat koreksi absen approver atas nama anda, please check in aplikasi`
+    };
+
     try {
         const createInOut = await InOut.create({
             userId:user && user.id,
@@ -488,6 +503,18 @@ export const createKoreksiByDate = async(req, res) => {
             statusKoreksiId:statusKoreksi && statusKoreksi.id,
             isActive:isActive
         });
+
+         // create reusable transporter object using the default SMTP transport
+        const transporter = nodemailer.createTransport({
+            host: process.env.HOST,
+            port: process.env.MAIL_PORT,
+            auth: {
+                user: process.env.MAIL,
+                pass: process.env.MAIL_PASS
+            }
+        });
+
+        await transporter.sendMail(msg);
 
         return res.status(201).json({msg: "koreksi success created"});
     } catch (error) {
