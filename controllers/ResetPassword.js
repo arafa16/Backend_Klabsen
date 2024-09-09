@@ -12,7 +12,9 @@ export const sendEmail = async(req, res) => {
         }
     });
 
-    if(!findUser) return res.status(404).json({msg: "email not found"});
+    if(!findUser || findUser === null){
+        return res.status(404).json({msg: "email not found"});
+    }
 
     const secret = process.env.SESS_SECRET;
 
