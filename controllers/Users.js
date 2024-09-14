@@ -495,7 +495,7 @@ export const createUser = async(req, res) => {
         return res.status(404).json({msg: "pendidikan can't be null"})
     }
 
-    if(kontakEmergencyId === null || kontakEmergencyId === ''){
+    if(contactEmergencyId === null || contactEmergencyId === ''){
         return res.status(404).json({msg: "kontak emergency can't be null"})
     }
 
