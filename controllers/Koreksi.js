@@ -450,21 +450,11 @@ export const createKoreksiByDate = async(req, res) => {
     if(!pelanggaran) return res.status(404).json({msg: "pelanggaran not found"});
 
 
-    // const inOut = await InOut.findOne({
-    //     where:{
-    //         uuid:inOutId
-    //     }
-    // });
-
-    // if(!inOut) return res.status(404).json({msg: "absen not found"});
-
     const statusInout = await StatusInout.findOne({
         where:{
             code:codeStatusInout
         }
     })
-
-    // console.log(statusInout, 'statusInout');
 
     if(!statusInout) return res.status(404).json({msg: "status inout not found"});
 
@@ -504,7 +494,7 @@ export const createKoreksiByDate = async(req, res) => {
             isActive:isActive
         });
 
-         // create reusable transporter object using the default SMTP transport
+        // create reusable transporter object using the default SMTP transport
         const transporter = nodemailer.createTransport({
             host: process.env.HOST,
             port: process.env.MAIL_PORT,

@@ -44,6 +44,7 @@ import Perhitungan from './routes/PerhitunganRoute.js';
 import ResetPassword from './routes/ResetPasswordRoute.js';
 import MesinAbsen from './routes/MesinAbsenRoute.js';
 import DataInOut from './routes/DataInOutRouter.js';
+import Slider from './routes/SliderRouter.js';
 
 import cron from 'node-cron';
 
@@ -113,6 +114,7 @@ app.use(TipeEvent);
 app.use(Perhitungan);
 app.use(ResetPassword);
 app.use(MesinAbsen);
+app.use(Slider);
 app.use('/dataInOut', DataInOut);
 
 //setup public folder
