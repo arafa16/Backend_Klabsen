@@ -10,6 +10,7 @@ import StatusKoreksi from "../models/StatusKoreksiModal.js";
 import { Op } from "sequelize";
 import JamOperasional from "../models/JamOperasionalModal.js";
 import JamOperasionalGroup from "../models/JamOperasionalGroupModal.js";
+import moment from 'moment';
 
 export const getInOut = async(req, res) => {
     try {
@@ -152,10 +153,15 @@ export const createInOut = async(req, res) => {
         }
     })
 
+    //moment
+    const tanggal_mulai = moment(tanggalMulai).format('YYYY-MM-DD HH:mm:ss');
+
+    console.log(tanggalMulai, tanggal_mulai, 'tanggal mulai');
+
     try {
         await InOut.create({
             userId:user && user.id,
-            tanggalMulai:tanggalMulai,
+            tanggalMulai:tanggal_mulai,
             tanggalSelesai:tanggalSelesai,
             tipeAbsenId:tipeAbsen && tipeAbsen.id,
             pelanggaranId:pelanggaran && pelanggaran.id,
